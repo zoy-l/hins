@@ -1,0 +1,4 @@
+// Leave it to eslint to solve the annoying "..."
+{
+  "javascript.validate.enable": false
+}

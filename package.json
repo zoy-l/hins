@@ -1,0 +1,19 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@octokit/core": "^3.2.5",
+    "lerna": "^3.22.1",
+    "zmi-nerd": "^1.0.48"
+  },
+  "scripts": {
+    "clean:modules": "lerna clean --yes",
+    "nerd": "nerd build --watch"
+  }
+}
