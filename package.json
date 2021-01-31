@@ -2,18 +2,23 @@
   "name": "root",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
     "@octokit/core": "^3.2.5",
+    "eslint": "^7.19.0",
+    "eslint-config-zmi": "^0.0.4",
     "lerna": "^3.22.1",
-    "zmi-nerd": "^1.0.48"
+    "zmi-nerd": "^1.1.4"
   },
   "scripts": {
+    "link": "cd packages/hins && yarn link && cd -",
     "clean:modules": "lerna clean --yes",
-    "nerd": "nerd build --watch"
+    "nerd": "nerd build --watch",
+    "update:deps": "yarn upgrade-interactive --latest"
   }
 }
