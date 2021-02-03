@@ -13,7 +13,8 @@
     "eslint": "^7.19.0",
     "eslint-config-zmi": "^0.0.4",
     "lerna": "^3.22.1",
-    "zmi-nerd": "^1.1.4"
+    "typescript": "^4.1.3",
+    "zmi-nerd": "^1.1.5"
   },
   "scripts": {
     "link": "cd packages/hins && yarn link && cd -",
