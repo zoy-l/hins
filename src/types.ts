@@ -1,3 +1,4 @@
+import { ICoreApplyPluginTypes } from '@/enum'
 import { Root, Schema } from 'joi'
 import Core from '@/Core'
 
@@ -64,6 +65,13 @@ export interface ICore {
 export interface ICoreStart {
   args?: IArgs
   command: string
+}
+
+export interface ICoreApplyPlugin {
+  type: ICoreApplyPluginTypes
+  initialValue?: any
+  key: string
+  args?: any
 }
 
 /**

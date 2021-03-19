@@ -1,4 +1,5 @@
 import resolvePlugins, { pathToRegister } from '@/resolvePlugins'
+import { AsyncSeriesWaterfallHook } from 'tapable'
 import BabelRegister from '@/BabelRegister'
 import cloneDeep from 'lodash.clonedeep'
 import ReadConfig from '@/ReadConfig'
@@ -16,9 +17,10 @@ import type {
   IWorkDir,
   ICoreStart,
   IHook,
-  ICommands
+  ICommands,
+  ICoreApplyPlugin
 } from '@/types'
-import { ICoreStage, CoreAttribute } from '@/enum'
+import { ICoreStage, CoreAttribute, ICoreApplyPluginTypes } from '@/enum'
 
 export default class Core extends events.EventEmitter {
   /**
@@ -52,6 +54,11 @@ export default class Core extends events.EventEmitter {
   commands: Record<string, ICommands> = {}
 
   /**
+   * @desc Apply Plugin enumeration value, provide a plug-in use
+   */
+  ApplyPluginType = ICoreApplyPluginTypes
+
+  /**
    * @desc plugin Methods
    */
   pluginMethods: Record<string, { (...args: any[]): void }> = {}
@@ -74,7 +81,7 @@ export default class Core extends events.EventEmitter {
   /**
    * @desc the final processed config
    */
-  // finallyConfig: IConfig
+  finallyConfig: IConfig = {}
 
   /**
    * @desc runtime babel
@@ -114,6 +121,63 @@ export default class Core extends events.EventEmitter {
 
   setStage(stage: ICoreStage) {
     this.stage = stage
+  }
+
+  async applyPlugins(options: ICoreApplyPlugin) {
+    const { add, modify, event } = this.ApplyPluginType
+    const { key, type, args, initialValue } = options
+
+    const hookArgs = {
+      [add]: initialValue ?? [],
+      [modify]: initialValue,
+      [event]: null
+    }
+    const typeIndex = Object.keys(hookArgs).indexOf(type)
+    const hooks = this.hooksByPluginId[key] ?? []
+
+    // tapable: https://github.com/webpack/tapable
+    const TypeSeriesWater = new AsyncSeriesWaterfallHook([typeIndex !== 2 ? 'memo' : '_'])
+
+    // Add hook method into the actuator
+    // Prepare for later
+    // prettier-ignore
+    const TypeSeriesWaterApply = (
+      func: (hook: IHook) => (...Args: any[]) => Promise<any>
+    ) => {
+      hooks.forEach((hook) => {
+        TypeSeriesWater.tapPromise({
+          name: hook.pluginId ?? `$${hook.key}`,
+          stage: hook.stage ?? 0,
+          before: hook.before
+        }, func(hook))
+      })
+    }
+
+    // `add` requires return values, these return values will eventually be combined into an array
+    // `modify`, need to modify the first parameter and return
+    // `event`, no return value
+    switch (type) {
+      case add:
+        TypeSeriesWaterApply((hook) => async (memo) => {
+          const items = await hook.fn(args)
+          return memo.concat(items)
+        })
+        break
+      case modify:
+        TypeSeriesWaterApply((hook) => async (memo) => hook.fn(memo, args))
+        break
+      case event:
+        TypeSeriesWaterApply((hook) => async () => {
+          await hook.fn(args)
+        })
+        break
+      default:
+        throw new Error(
+          `applyPlugin failed, type is not defined or is not matched, got ${type}.`
+        )
+    }
+
+    return TypeSeriesWater.promise(hookArgs[type]) as Promise<any>
   }
 
   async readyPlugins() {
@@ -166,23 +230,34 @@ export default class Core extends events.EventEmitter {
     }
 
     this.setStage(ICoreStage.pluginReady)
-    // await this.applyPlugins({
-    //   key: 'onPluginReady',
-    //   type: this.ApplyPluginsType.event
-    // })
+    await this.applyPlugins({
+      key: 'onPluginReady',
+      type: this.ApplyPluginType.event
+    })
   }
 
   async readyConfig() {
-    //
+    this.setStage(ICoreStage.getConfig)
+    const defaultConfig = await this.applyPlugins({
+      key: 'modifyDefaultConfig',
+      type: this.ApplyPluginType.modify,
+      initialValue: this.configInstance.getDefaultConfig()
+    })
+
+    this.finallyConfig = await this.applyPlugins({
+      key: 'modifyConfig',
+      type: this.ApplyPluginType.modify,
+      initialValue: this.configInstance.getConfig(defaultConfig)
+    })
   }
 
   async start(options: ICoreStart) {
     const { args, command } = options
     this.args = args
 
-    console.log(command)
-
     await this.readyPlugins()
+
+    console.log(command)
 
     await this.readyConfig()
   }

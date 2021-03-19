@@ -11,6 +11,8 @@
   },
   "devDependencies": {
     "@types/lodash.clonedeep": "^4.5.6",
+    "@types/lodash.isplainobject": "^4.0.6",
+    "@types/lodash.merge": "^4.6.6",
     "@types/lodash.uniq": "^4.5.6",
     "@types/resolve": "^1.20.0",
     "eslint": "^7.22.0",
@@ -27,6 +29,8 @@
     "dotenv": "^8.2.0",
     "joi": "^17.4.0",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.isplainobject": "^4.0.6",
+    "lodash.merge": "^4.6.2",
     "lodash.uniq": "^4.5.0",
     "resolve": "^1.20.0",
     "slash": "^3.0.0",

@@ -1,9 +1,8 @@
 export default (api) => {
-  console.log(api)
-
   api.describe({
     key: 'cache',
     config: {
+      default: 'memory',
       schema(joi) {
         return joi.valid('memory', 'filesystem')
       }

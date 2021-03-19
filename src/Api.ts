@@ -22,19 +22,11 @@ export default class Api {
     const { key, config } = options
     const { plugins } = this.core
 
-    // assert(
-    //   !plugins[key],
-    //   `api.describe() failed, plugin ${key} is already registered by ${plugins[key].path}.`
-    // )
-
-    debugger
-
+    assert(options.key, `api.describe() failed, the plugin is missing an 'key'.`)
     assert(
       options.config.schema && typeof options.config.schema === 'function',
       `api.describe() failed, the plugin is missing 'schema'`
     )
-
-    assert(options.key, `api.describe() failed, the plugin is missing an 'key'.`)
 
     plugins[this.path].key = key
     plugins[this.path].config = config
