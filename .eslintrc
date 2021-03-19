@@ -1,4 +1,8 @@
 {
   "root": true,
-  "extends": ["zmi/typescript"]
+  "extends": ["zmi/typescript"],
+  "rules": {
+    "global-require": "off",
+    "import/no-dynamic-require": "off"
+  }
 }
