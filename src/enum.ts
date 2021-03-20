@@ -8,7 +8,7 @@ export enum ICoreStage {
   run
 }
 
-export enum ICoreApplyPluginTypes {
+export enum ICoreApplyHookTypes {
   add = 'add',
   modify = 'modify',
   event = 'event'
@@ -17,11 +17,11 @@ export enum ICoreApplyPluginTypes {
 export const CoreAttribute = [
   'ApplyPluginsType',
   'babelRegister',
-  'finallyConfig',
   'applyPlugins',
-  'initConifg',
+  'initConfig',
   'hasPlugins',
   'coreStage',
+  'config',
   'paths',
   'stage',
   'args',

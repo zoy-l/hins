@@ -1,5 +1,5 @@
 import type { IApi, IApiDescribe, IApiRegisterMethod, IHook, ICommands } from '@/types'
-import { Cycle } from '@/enum'
+// import { Cycle } from '@/enum'
 import assert from 'assert'
 
 export default class Api {
@@ -12,10 +12,6 @@ export default class Api {
 
     this.path = path
     this.core = core
-
-    Cycle.forEach((name) => {
-      this.registerMethod({ name })
-    })
   }
 
   describe(options: IApiDescribe) {
@@ -61,7 +57,7 @@ export default class Api {
       }
   }
 
-  register(options: IHook) {
+  register(options: Omit<IHook, 'pluginId'>) {
     const { hooksByPluginId } = this.core
 
     assert(

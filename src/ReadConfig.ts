@@ -20,9 +20,8 @@ export default class Config {
     this.possibleConfigPaths = options.possibleConfigPaths
   }
 
-  getConfig(defaultConfig: { [key: string]: any }) {
+  getConfig(userConfig: IConfig, defaultConfig: Record<string, any>) {
     const { stage, plugins } = this.core
-    const userConfig = this.getUserConfig()
 
     assert(
       stage >= ICoreStage.pluginReady,
@@ -85,10 +84,9 @@ export default class Config {
 
   getDefaultConfig() {
     const { plugins } = this.core
-    const pluginIds = Object.keys(plugins)
 
     // collect default config
-    return pluginIds.reduce((memo, pluginId) => {
+    return Object.keys(plugins).reduce((memo, pluginId) => {
       const { key, config = {} } = plugins[pluginId]
       if ('default' in config) memo[key] = config.default
       return memo

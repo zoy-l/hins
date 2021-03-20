@@ -1,4 +1,4 @@
-import { ICoreApplyPluginTypes } from '@/enum'
+import { ICoreApplyHookTypes } from '@/enum'
 import { Root, Schema } from 'joi'
 import Core from '@/Core'
 
@@ -9,8 +9,8 @@ export type IArgs = Record<string, any>
 export type IConfigPlugins = string[]
 
 export interface IHook {
-  fn: { (...args: any[]): void | Promise<void> }
-  pluginId?: string
+  fn: { (...args: any[]): any | Promise<any> }
+  pluginId: string
   before?: string
   stage?: number
   key: string
@@ -19,7 +19,7 @@ export interface IHook {
 export interface ICommands {
   command: string
   description?: string
-  fn: { (args: IArgs): void }
+  fn: { (args: IArgs): any }
 }
 
 export interface IResolvePlugins {
@@ -67,8 +67,8 @@ export interface ICoreStart {
   command: string
 }
 
-export interface ICoreApplyPlugin {
-  type: ICoreApplyPluginTypes
+export interface ICoreApplyHook {
+  type: ICoreApplyHookTypes
   initialValue?: any
   key: string
   args?: any

@@ -7,7 +7,7 @@
   "scripts": {
     "debug": "node --inspect-brk ./test.js",
     "nerd": "nerd build --watch",
-    "update:deps": "yarn upgrade --latest"
+    "update:deps": "yarn upgrade-interactive --latest"
   },
   "devDependencies": {
     "@types/lodash.clonedeep": "^4.5.6",

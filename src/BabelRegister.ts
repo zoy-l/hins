@@ -59,7 +59,7 @@ export default class BabelRegister {
       extensions: ['.js', '.ts'],
       babelrc: false,
       cache: false,
-      sourceMaps: true
+      sourceMaps: 'inline'
     })
   }
 }

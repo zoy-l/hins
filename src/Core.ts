@@ -11,16 +11,16 @@ import path from 'path'
 import Api from '@/Api'
 
 import type {
+  ICoreApplyHook,
+  ICoreStart,
+  ICommands,
+  IWorkDir,
   IPlugin,
   IConfig,
   ICore,
-  IWorkDir,
-  ICoreStart,
-  IHook,
-  ICommands,
-  ICoreApplyPlugin
+  IHook
 } from '@/types'
-import { ICoreStage, CoreAttribute, ICoreApplyPluginTypes } from '@/enum'
+import { ICoreStage, CoreAttribute, ICoreApplyHookTypes, Cycle } from '@/enum'
 
 export default class Core extends events.EventEmitter {
   /**
@@ -39,11 +39,6 @@ export default class Core extends events.EventEmitter {
   plugins: IPlugin | [] = []
 
   /**
-   * @desc initial config
-   */
-  initConfig: IConfig
-
-  /**
    * @desc initial Plugins
    */
   initPlugins: IPlugin[] = []
@@ -56,7 +51,7 @@ export default class Core extends events.EventEmitter {
   /**
    * @desc Apply Plugin enumeration value, provide a plug-in use
    */
-  ApplyPluginType = ICoreApplyPluginTypes
+  ApplyHookType = ICoreApplyHookTypes
 
   /**
    * @desc plugin Methods
@@ -81,7 +76,12 @@ export default class Core extends events.EventEmitter {
   /**
    * @desc the final processed config
    */
-  finallyConfig: IConfig = {}
+  initConfig: IConfig
+
+  /**
+   * @desc the final processed config
+   */
+  config: IConfig = {}
 
   /**
    * @desc runtime babel
@@ -117,39 +117,45 @@ export default class Core extends events.EventEmitter {
       key: 'initPlugins',
       value: uniq(this.initPlugins.map((plugin) => plugin.path))
     })
+
+    const cycle = new Api({ path: 'internal', core: this })
+
+    Cycle.forEach((name) => {
+      cycle.registerMethod({ name })
+    })
   }
 
   setStage(stage: ICoreStage) {
     this.stage = stage
   }
 
-  async applyPlugins(options: ICoreApplyPlugin) {
-    const { add, modify, event } = this.ApplyPluginType
+  async applyHooks(options: ICoreApplyHook) {
+    const { add, modify, event } = this.ApplyHookType
     const { key, type, args, initialValue } = options
 
-    const hookArgs = {
-      [add]: initialValue ?? [],
-      [modify]: initialValue,
-      [event]: null
+    if (type === add && initialValue !== undefined) {
+      assert(
+        Array.isArray(initialValue),
+        'when ApplyHooksType is `add`, initialValue must be an array'
+      )
     }
-    const typeIndex = Object.keys(hookArgs).indexOf(type)
+
     const hooks = this.hooksByPluginId[key] ?? []
 
-    // tapable: https://github.com/webpack/tapable
-    const TypeSeriesWater = new AsyncSeriesWaterfallHook([typeIndex !== 2 ? 'memo' : '_'])
+    const waterFall = new AsyncSeriesWaterfallHook(['memo'])
 
     // Add hook method into the actuator
     // Prepare for later
-    // prettier-ignore
-    const TypeSeriesWaterApply = (
-      func: (hook: IHook) => (...Args: any[]) => Promise<any>
-    ) => {
+    const apply = (func: (hook: IHook) => (memo: any[] | any) => Promise<any>) => {
       hooks.forEach((hook) => {
-        TypeSeriesWater.tapPromise({
-          name: hook.pluginId ?? `$${hook.key}`,
-          stage: hook.stage ?? 0,
-          before: hook.before
-        }, func(hook))
+        waterFall.tapPromise(
+          {
+            name: hook.pluginId,
+            stage: hook.stage ?? 0,
+            before: hook.before
+          },
+          func(hook)
+        )
       })
     }
 
@@ -158,16 +164,16 @@ export default class Core extends events.EventEmitter {
     // `event`, no return value
     switch (type) {
       case add:
-        TypeSeriesWaterApply((hook) => async (memo) => {
+        apply((hook) => async (memo) => {
           const items = await hook.fn(args)
           return memo.concat(items)
         })
         break
       case modify:
-        TypeSeriesWaterApply((hook) => async (memo) => hook.fn(memo, args))
+        apply((hook) => async (memo) => hook.fn(memo, args))
         break
       case event:
-        TypeSeriesWaterApply((hook) => async () => {
+        apply((hook) => async () => {
           await hook.fn(args)
         })
         break
@@ -177,7 +183,7 @@ export default class Core extends events.EventEmitter {
         )
     }
 
-    return TypeSeriesWater.promise(hookArgs[type]) as Promise<any>
+    return waterFall.promise(initialValue) as Promise<any>
   }
 
   async readyPlugins() {
@@ -189,18 +195,27 @@ export default class Core extends events.EventEmitter {
       const { path, apply } = extraPlugins.shift()!
 
       const api = new Proxy(new Api({ path, core: this }), {
-        get: (target, prop: string) =>
+        get: (target, prop: string) => {
+          if (
+            (prop === 'initConfig' || prop === 'config') &&
+            this.stage < ICoreStage.pluginReady
+          ) {
+            console.warn(`Cannot get config before plugin registration`)
+          }
           // the plugin Method has the highest weight,
           // followed by Service finally plugin API
           // Because pluginMethods needs to be available in the register phase
           // the latest updates must be obtained through the agent dynamics
           // to achieve the effect of registration and use
-          this.pluginMethods[prop] ??
-          (CoreAttribute.includes(prop)
-            ? typeof this[prop] === 'function'
-              ? this[prop].bind(this)
-              : this[prop]
-            : target[prop])
+          return (
+            this.pluginMethods[prop] ??
+            (CoreAttribute.includes(prop)
+              ? typeof this[prop] === 'function'
+                ? this[prop].bind(this)
+                : this[prop]
+              : target[prop])
+          )
+        }
       })
 
       // Plugin is cached here for checking
@@ -230,24 +245,26 @@ export default class Core extends events.EventEmitter {
     }
 
     this.setStage(ICoreStage.pluginReady)
-    await this.applyPlugins({
+    await this.applyHooks({
       key: 'onPluginReady',
-      type: this.ApplyPluginType.event
+      type: this.ApplyHookType.event
     })
   }
 
   async readyConfig() {
+    // merge defaults
+    // verify config value
     this.setStage(ICoreStage.getConfig)
-    const defaultConfig = await this.applyPlugins({
+    const defaultConfig = await this.applyHooks({
       key: 'modifyDefaultConfig',
-      type: this.ApplyPluginType.modify,
+      type: this.ApplyHookType.modify,
       initialValue: this.configInstance.getDefaultConfig()
     })
 
-    this.finallyConfig = await this.applyPlugins({
+    this.config = await this.applyHooks({
       key: 'modifyConfig',
-      type: this.ApplyPluginType.modify,
-      initialValue: this.configInstance.getConfig(defaultConfig)
+      type: this.ApplyHookType.modify,
+      initialValue: this.configInstance.getConfig(this.initConfig, defaultConfig)
     })
   }
 
@@ -256,9 +273,18 @@ export default class Core extends events.EventEmitter {
     this.args = args
 
     await this.readyPlugins()
-
-    console.log(command)
-
     await this.readyConfig()
+
+    this.setStage(ICoreStage.run)
+    await this.applyHooks({
+      key: 'onStart',
+      type: this.ApplyHookType.event,
+      args: { args }
+    })
+
+    const event = this.commands[command]
+    assert(event, `start command failed, command "${command}" does not exists.`)
+
+    return event.fn({ args })
   }
 }

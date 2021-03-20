@@ -1,4 +1,6 @@
 export default (api) => {
+  debugger
+
   api.describe({
     key: 'cache',
     config: {
@@ -7,5 +9,9 @@ export default (api) => {
         return joi.valid('memory', 'filesystem')
       }
     }
+  })
+
+  api.onPluginReady(() => {
+    console.log(api.initConfig)
   })
 }
