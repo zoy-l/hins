@@ -1,4 +1,4 @@
-const Core = require('../lib/Core').default
+const { Core } = require('../dist')
 const babelRegister = require('./BabelRegister')
 
 const core = new Core({

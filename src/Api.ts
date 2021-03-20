@@ -1,6 +1,6 @@
-import type { IApi, IApiDescribe, IApiRegisterMethod, IHook, ICommands } from '@/types'
-// import { Cycle } from '@/enum'
 import assert from 'assert'
+
+import type { IApi, IApiDescribe, IApiRegisterMethod, IHook, ICommands } from './types'
 
 export default class Api {
   path: IApi['path']

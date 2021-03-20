@@ -1,13 +1,13 @@
-import resolvePlugins, { pathToRegister } from '@/resolvePlugins'
 import { AsyncSeriesWaterfallHook } from 'tapable'
 import cloneDeep from 'lodash.clonedeep'
-import ReadConfig from '@/ReadConfig'
-import withEnv from '@/withEnv'
 import uniq from 'lodash.uniq'
 import assert from 'assert'
 import path from 'path'
-import Api from '@/Api'
 
+import resolvePlugins, { pathToRegister } from './resolvePlugins'
+import ReadConfig from './ReadConfig'
+import withEnv from './withEnv'
+import Api from './Api'
 import type {
   IConfigPlugins,
   ICoreApplyHook,
@@ -20,8 +20,8 @@ import type {
   ICore,
   IHook,
   IMethods
-} from '@/types'
-import { ICoreStage, CoreAttribute, ICoreApplyHookTypes, Cycle } from '@/enum'
+} from './types'
+import { ICoreStage, CoreAttribute, ICoreApplyHookTypes, Cycle } from './enum'
 
 export default class Core {
   /**
@@ -99,10 +99,16 @@ export default class Core {
    */
   babelRegister: INonEmpty<ICore>['babelRegister']
 
+  /**
+   * @desc monitor config
+   */
+  isWatch: boolean
+
   constructor(options: ICore) {
+    this.isWatch = options.isWatch ?? true
     this.cwd = options.cwd ?? process.cwd()
-    this.babelRegister = options.babelRegister ?? (() => {})
     this.internalPlugins = options.plugins ?? []
+    this.babelRegister = options.babelRegister ?? (() => {})
 
     this.configInstance = new ReadConfig({
       possibleConfigName: options.possibleConfigName ?? [],
@@ -125,13 +131,13 @@ export default class Core {
     // The storage is for later processing the config
     // and also to initialize the user plugins
     this.initConfig = this.configInstance.getUserConfig()
-
     this.initPlugins = resolvePlugins({
       userConfigPlugins: this.initConfig.plugins,
       plugins: this.internalPlugins,
       cwd: this.cwd
     })
 
+    // duplicate processing, no need to deal with it later
     this.babelRegister(uniq(this.initPlugins.map((plugin) => plugin.path)))
 
     withEnv(path.join(this.cwd, '.env'))

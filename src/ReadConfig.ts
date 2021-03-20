@@ -1,7 +1,4 @@
-import { compatESModuleRequire, isEqual, mergeDefault } from '@/tools'
-import type { IConfig, IReadConfig, IWorkDir } from '@/types'
 import clearModule from 'clear-module'
-import { ICoreStage } from '@/enum'
 import chokidar from 'chokidar'
 import assert from 'assert'
 import chalk from 'chalk'
@@ -9,6 +6,11 @@ import slash from 'slash'
 import path from 'path'
 import Joi from 'joi'
 import fs from 'fs'
+
+import { compatESModuleRequire, isEqual, mergeDefault } from './tools'
+import { ICoreStage } from './enum'
+
+import type { IConfig, IReadConfig, IWorkDir } from './types'
 
 export default class Config {
   /**

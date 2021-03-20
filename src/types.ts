@@ -1,6 +1,7 @@
-import { ICoreApplyHookTypes } from '@/enum'
 import { Root, Schema } from 'joi'
-import Core from '@/Core'
+
+import { ICoreApplyHookTypes } from './enum'
+import Core from './Core'
 
 export type IWorkDir = string
 
@@ -66,6 +67,7 @@ export interface ICore {
   babelRegister?: (path: string | string[]) => void
   possibleConfigName?: IWorkDir[]
   plugins?: IConfigPlugins
+  isWatch?: boolean
   cwd?: IWorkDir
 }
 
