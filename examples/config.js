@@ -1,3 +1,3 @@
 export default {
-  // cache: 'memory'
+  cache: 'memory'
 }

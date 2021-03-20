@@ -12,6 +12,6 @@ export default (api) => {
   })
 
   api.onPluginReady(() => {
-    console.log(api.initConfig)
+    // console.log(api.initConfig)
   })
 }

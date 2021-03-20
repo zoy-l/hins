@@ -1,7 +1,10 @@
-import { compatESModuleRequire, mergeDefault } from '@/tools'
+import { compatESModuleRequire, isEqual, mergeDefault } from '@/tools'
 import type { IConfig, IReadConfig, IWorkDir } from '@/types'
+import clearModule from 'clear-module'
 import { ICoreStage } from '@/enum'
+import chokidar from 'chokidar'
 import assert from 'assert'
+import chalk from 'chalk'
 import slash from 'slash'
 import path from 'path'
 import Joi from 'joi'
@@ -31,14 +34,12 @@ export default class Config {
       `Config.getConfig() failed, it should not be executed before plugin is ready.`
     )
 
-    const userConfigKeys = Object.keys(userConfig).filter(
-      (key) => userConfig[key] !== false
-    )
+    const userConfigKeys = Object.keys(userConfig)
 
     const keepKeys = {}
     // get config
-    Object.keys(plugins).forEach((pluginId) => {
-      const { key, config = {} } = plugins[pluginId]
+    Object.keys(plugins).forEach((id) => {
+      const { key, config = {} } = plugins[id]
       const value = userConfig[key]
 
       if (!keepKeys[key]) {
@@ -47,21 +48,18 @@ export default class Config {
         throw new Error(`have multiple same ${key}`)
       }
 
-      // recognize as key if have `schema` config
-      // disabled when `value` is false
-      if (!config.schema || value === false) return
-
       const schema = config.schema(Joi)
-      assert(
-        Joi.isSchema(schema),
-        `schema return from plugin ${pluginId} is not valid schema.`
-      )
+      assert(Joi.isSchema(schema), `schema return from plugin ${id} is not valid schema.`)
       const { error } = schema.validate(value)
 
       if (error) {
         throw new Error(error.message)
       }
 
+      // All the configurable key values are obtained above
+      // and the verification process is performed here.
+      // If all the key values are filled in
+      // the length of `userConfigKeys` should be `0`
       const index = userConfigKeys.indexOf(key.split('.')[0])
       if (index !== -1) {
         userConfigKeys.splice(index, 1)
@@ -77,6 +75,8 @@ export default class Config {
       }
     })
 
+    // Same as above, if the value of `userConfigKeys` is not 0,
+    // an error is thrown here and prompts which keys are illegal
     if (userConfigKeys.length) {
       const keys = userConfigKeys.length > 1 ? 'keys' : 'key'
       throw new Error(`Invalid config ${keys}: ${userConfigKeys.join(', ')}`)
@@ -98,24 +98,64 @@ export default class Config {
 
   getConfigFile() {
     const { cwd } = this.core
-    const configFile = this.possibleConfigName.find((file) =>
+    const env = process.env.HINS_CONFIG_ENV
+    // Get a valid file name
+    // I.e. check if the file exists
+    let configFile = this.possibleConfigName.find((file) =>
       fs.existsSync(path.join(cwd, file))
     )
-    return configFile ? slash(configFile) : undefined
+
+    if (configFile) {
+      if (env) {
+        const ext = path.extname(configFile)
+        configFile = configFile.replace(ext, `.${env}.${ext}`)
+      }
+
+      return slash(path.join(cwd, configFile))
+    }
+
+    return false
   }
 
   getUserConfig(): IConfig {
-    const { cwd, babelRegister } = this.core
+    const { babelRegister } = this.core
     const configFile = this.getConfigFile()
 
     if (configFile) {
-      const real = path.join(cwd, configFile)
+      clearModule(configFile)
+      babelRegister(configFile)
 
-      babelRegister(real)
-
-      return { ...compatESModuleRequire(require(real)) }
+      return { ...compatESModuleRequire(require(configFile)) }
     }
 
     return {}
+  }
+
+  watchConfig() {
+    const { cwd, config, args } = this.core
+
+    const configFile = this.getConfigFile()
+
+    if (configFile) {
+      const watcher = chokidar.watch(configFile, {
+        cwd,
+        ignoreInitial: true,
+        awaitWriteFinish: {
+          stabilityThreshold: 500
+        }
+      })
+
+      watcher.on('all', async (event, paths) => {
+        console.log(chalk.bgGray(` ${event} `), paths)
+        const initConfig = this.getUserConfig()
+        const newConfig = this.getConfig(initConfig, this.getDefaultConfig())
+
+        if (!isEqual(newConfig, config)) {
+          await watcher.close()
+          this.core.start(args!)
+          console.log(chalk.gray(`🎯 Try to restart...`))
+        }
+      })
+    }
   }
 }

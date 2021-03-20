@@ -8,11 +8,17 @@ export type IArgs = Record<string, any>
 
 export type IConfigPlugins = string[]
 
+export type INonEmpty<T extends Record<string, any>> = {
+  [key in keyof T]-?: T[key]
+}
+
+export type IMethods = { (...args: any[]): any | Promise<any> }
+
 export interface IHook {
-  fn: { (...args: any[]): any | Promise<any> }
   pluginId: string
   before?: string
   stage?: number
+  fn: IMethods
   key: string
 }
 
@@ -57,6 +63,7 @@ export interface IPlugin {
  */
 
 export interface ICore {
+  babelRegister?: (path: string | string[]) => void
   possibleConfigName?: IWorkDir[]
   plugins?: IConfigPlugins
   cwd?: IWorkDir
@@ -71,7 +78,7 @@ export interface ICoreApplyHook {
   type: ICoreApplyHookTypes
   initialValue?: any
   key: string
-  args?: any
+  args?: IArgs
 }
 
 /**
@@ -96,5 +103,5 @@ export interface IApiDescribe {
 export interface IApiRegisterMethod {
   name: string
   description?: string
-  fn?: { (...args: any[]): void }
+  fn?: IMethods
 }

@@ -4,25 +4,26 @@ import cloneDeep from 'lodash.clonedeep'
 import ReadConfig from '@/ReadConfig'
 import withEnv from '@/withEnv'
 import uniq from 'lodash.uniq'
-import events from 'events'
 import assert from 'assert'
 import path from 'path'
 import Api from '@/Api'
 
 import type {
+  IConfigPlugins,
   ICoreApplyHook,
   ICoreStart,
   ICommands,
+  INonEmpty,
   IWorkDir,
   IPlugin,
   IConfig,
   ICore,
   IHook,
-  IConfigPlugins
+  IMethods
 } from '@/types'
 import { ICoreStage, CoreAttribute, ICoreApplyHookTypes, Cycle } from '@/enum'
 
-export default class Core extends events.EventEmitter {
+export default class Core {
   /**
    * @desc directory path
    */
@@ -31,7 +32,7 @@ export default class Core extends events.EventEmitter {
   /**
    * @desc extra command
    */
-  args?: Record<string, any>
+  args?: ICoreStart
 
   /**
    * @desc registered Plugins
@@ -56,7 +57,7 @@ export default class Core extends events.EventEmitter {
   /**
    * @desc plugin Methods
    */
-  pluginMethods: Record<string, { (...args: any[]): void }> = {}
+  pluginMethods: Record<string, IMethods> = {}
 
   /**
    * @desc { Record<string, IHook[]> }
@@ -76,7 +77,12 @@ export default class Core extends events.EventEmitter {
   /**
    * @desc the final processed config
    */
-  initConfig: IConfig
+  initConfig: IConfig = {}
+
+  /**
+   * @desc internal Plugins
+   */
+  internalPlugins: IConfigPlugins
 
   /**
    * @desc the final processed config
@@ -84,36 +90,24 @@ export default class Core extends events.EventEmitter {
   config: IConfig = {}
 
   /**
-   * @desc runtime babel
-   */
-  babelRegister: any
-
-  /**
    * @desc Config Instance
    */
   configInstance: ReadConfig
 
-  constructor(options: ICore) {
-    super()
+  /**
+   * @desc runtime babel
+   */
+  babelRegister: INonEmpty<ICore>['babelRegister']
 
+  constructor(options: ICore) {
     this.cwd = options.cwd ?? process.cwd()
+    this.babelRegister = options.babelRegister ?? (() => {})
+    this.internalPlugins = options.plugins ?? []
 
     this.configInstance = new ReadConfig({
       possibleConfigName: options.possibleConfigName ?? [],
       core: this
     })
-
-    this.initConfig = this.configInstance.getUserConfig()
-
-    withEnv(path.join(this.cwd, '.env'))
-
-    this.initPlugins = resolvePlugins({
-      cwd: this.cwd,
-      plugins: options.plugins,
-      userConfigPlugins: this.initConfig.plugins
-    })
-
-    this.babelRegister(uniq(this.initPlugins.map((plugin) => plugin.path)))
 
     const cycle = new Api({ path: 'internal', core: this })
 
@@ -124,6 +118,23 @@ export default class Core extends events.EventEmitter {
 
   setStage(stage: ICoreStage) {
     this.stage = stage
+  }
+
+  init() {
+    // This is just to read the config without any verification.
+    // The storage is for later processing the config
+    // and also to initialize the user plugins
+    this.initConfig = this.configInstance.getUserConfig()
+
+    this.initPlugins = resolvePlugins({
+      userConfigPlugins: this.initConfig.plugins,
+      plugins: this.internalPlugins,
+      cwd: this.cwd
+    })
+
+    this.babelRegister(uniq(this.initPlugins.map((plugin) => plugin.path)))
+
+    withEnv(path.join(this.cwd, '.env'))
   }
 
   async applyHooks(options: ICoreApplyHook) {
@@ -263,11 +274,15 @@ export default class Core extends events.EventEmitter {
       type: this.ApplyHookType.modify,
       initialValue: this.configInstance.getConfig(this.initConfig, defaultConfig)
     })
+
+    this.configInstance.watchConfig()
   }
 
   async start(options: ICoreStart) {
     const { args, command } = options
-    this.args = args
+    this.args = options
+
+    this.init()
 
     await this.readyPlugins()
     await this.readyConfig()
