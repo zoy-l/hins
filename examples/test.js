@@ -1,4 +1,4 @@
-const Core = require('./lib/Core').default
+const Core = require('../lib/Core').default
 
 const core = new Core({
   possibleConfigPaths: ['config.js'],

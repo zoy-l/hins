@@ -1,6 +1,5 @@
 import resolvePlugins, { pathToRegister } from '@/resolvePlugins'
 import { AsyncSeriesWaterfallHook } from 'tapable'
-import BabelRegister from '@/BabelRegister'
 import cloneDeep from 'lodash.clonedeep'
 import ReadConfig from '@/ReadConfig'
 import withEnv from '@/withEnv'
@@ -18,7 +17,8 @@ import type {
   IPlugin,
   IConfig,
   ICore,
-  IHook
+  IHook,
+  IConfigPlugins
 } from '@/types'
 import { ICoreStage, CoreAttribute, ICoreApplyHookTypes, Cycle } from '@/enum'
 
@@ -36,7 +36,7 @@ export default class Core extends events.EventEmitter {
   /**
    * @desc registered Plugins
    */
-  plugins: IPlugin | [] = []
+  plugins: IConfigPlugins = []
 
   /**
    * @desc initial Plugins
@@ -86,7 +86,7 @@ export default class Core extends events.EventEmitter {
   /**
    * @desc runtime babel
    */
-  babelRegister = new BabelRegister()
+  babelRegister: any
 
   /**
    * @desc Config Instance
@@ -95,11 +95,11 @@ export default class Core extends events.EventEmitter {
 
   constructor(options: ICore) {
     super()
-    assert(options.possibleConfigPaths, `'possibleConfigPaths' is required`)
+
     this.cwd = options.cwd ?? process.cwd()
 
     this.configInstance = new ReadConfig({
-      possibleConfigPaths: options.possibleConfigPaths,
+      possibleConfigName: options.possibleConfigName ?? [],
       core: this
     })
 
@@ -113,10 +113,7 @@ export default class Core extends events.EventEmitter {
       userConfigPlugins: this.initConfig.plugins
     })
 
-    this.babelRegister.setOnlyMap({
-      key: 'initPlugins',
-      value: uniq(this.initPlugins.map((plugin) => plugin.path))
-    })
+    this.babelRegister(uniq(this.initPlugins.map((plugin) => plugin.path)))
 
     const cycle = new Api({ path: 'internal', core: this })
 

@@ -29,7 +29,7 @@ export interface IResolvePlugins {
 }
 
 export interface IReadConfig {
-  possibleConfigPaths: IWorkDir[]
+  possibleConfigName: IWorkDir[]
   core: Core
 }
 
@@ -57,7 +57,7 @@ export interface IPlugin {
  */
 
 export interface ICore {
-  possibleConfigPaths: IWorkDir[]
+  possibleConfigName?: IWorkDir[]
   plugins?: IConfigPlugins
   cwd?: IWorkDir
 }

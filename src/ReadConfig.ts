@@ -8,7 +8,10 @@ import Joi from 'joi'
 import fs from 'fs'
 
 export default class Config {
-  possibleConfigPaths: IWorkDir[]
+  /**
+   * @desc possible Config name
+   */
+  possibleConfigName: IWorkDir[]
 
   /**
    * @desc Service instance
@@ -17,7 +20,7 @@ export default class Config {
 
   constructor(options: IReadConfig) {
     this.core = options.core
-    this.possibleConfigPaths = options.possibleConfigPaths
+    this.possibleConfigName = options.possibleConfigName
   }
 
   getConfig(userConfig: IConfig, defaultConfig: Record<string, any>) {
@@ -95,7 +98,7 @@ export default class Config {
 
   getConfigFile() {
     const { cwd } = this.core
-    const configFile = this.possibleConfigPaths.find((file) =>
+    const configFile = this.possibleConfigName.find((file) =>
       fs.existsSync(path.join(cwd, file))
     )
     return configFile ? slash(configFile) : undefined
@@ -108,10 +111,7 @@ export default class Config {
     if (configFile) {
       const real = path.join(cwd, configFile)
 
-      babelRegister.setOnlyMap({
-        key: 'config',
-        value: [real]
-      })
+      babelRegister(real)
 
       return { ...compatESModuleRequire(require(real)) }
     }
