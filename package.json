@@ -22,30 +22,34 @@
     "@rollup/plugin-node-resolve": "^11.2.0",
     "@rollup/plugin-typescript": "^8.2.0",
     "@types/lodash.clonedeep": "^4.5.6",
+    "@types/lodash.isequal": "^4.5.5",
     "@types/lodash.isplainobject": "^4.0.6",
     "@types/lodash.merge": "^4.6.6",
     "@types/lodash.uniq": "^4.5.6",
     "@types/resolve": "^1.20.0",
+    "clear-module": "^4.1.1",
+    "dotenv": "^8.2.0",
     "eslint": "^7.22.0",
     "eslint-config-zmi": "^1.2.4",
     "rollup": "^2.42.1",
+    "rollup-plugin-copy": "^3.4.0",
+    "tapable": "^2.2.0",
     "typescript": "^4.2.3",
     "zmi-nerd": "^1.2.2-3",
-    "@types/lodash.isequal": "^4.5.5",
-    "clear-module": "^4.1.1",
-    "tapable": "^2.2.0",
-    "slash": "^3.0.0",
+    "chokidar": "^3.5.1",
     "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "^4.5.0",
     "lodash.isplainobject": "^4.0.6",
     "lodash.merge": "^4.6.2",
-    "lodash.uniq": "^4.5.0",
-    "dotenv": "^8.2.0",
-    "chalk": "^4.1.0"
+    "lodash.uniq": "^4.5.0"
   },
   "dependencies": {
+    "chalk": "^4.1.0",
     "resolve": "^1.20.0",
-    "chokidar": "^3.5.1",
-    "joi": "^17.4.0"
+    "joi": "17.4.0",
+    "slash": "^3.0.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "~2.3.1"
   }
 }

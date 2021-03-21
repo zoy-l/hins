@@ -1,6 +1,17 @@
 import assert from 'assert'
 
-import type { IApi, IApiDescribe, IApiRegisterMethod, IHook, ICommands } from './types'
+import { pathToRegister } from './resolvePlugins'
+import { ICoreStage } from './enum'
+
+import type {
+  IApiRegisterMethod,
+  IConfigPlugins,
+  IApiDescribe,
+  ICommands,
+  IPlugin,
+  IHook,
+  IApi
+} from './types'
 
 export default class Api {
   path: IApi['path']
@@ -36,6 +47,19 @@ export default class Api {
       `api.registerCommand() failed, the command ${command} is exists.`
     )
     commands[command] = options
+  }
+
+  registerPlugins(plugins: IConfigPlugins | IPlugin) {
+    assert(
+      this.core.stage === ICoreStage.initPlugins,
+      `api.registerPlugins() failed, it should only be used in registering stage.`
+    )
+    assert(Array.isArray(plugins), `api.registerPlugins() failed, plugins must be Array.`)
+    const extraPlugins = plugins.map((plugin) =>
+      typeof plugin === 'string' ? pathToRegister(plugin) : plugin
+    )
+
+    this.core.extraPlugins.unshift(...extraPlugins)
   }
 
   registerMethod(options: IApiRegisterMethod) {

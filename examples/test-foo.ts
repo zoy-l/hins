@@ -1,6 +1,4 @@
 export default (api) => {
-  debugger
-
   api.describe({
     key: 'cache',
     config: {

@@ -37,7 +37,12 @@ export default class Core {
   /**
    * @desc registered Plugins
    */
-  plugins: IConfigPlugins = []
+  plugins: IPlugin[] = []
+
+  /**
+   * @desc list of plugins when registering,
+   */
+  extraPlugins: IPlugin[] = []
 
   /**
    * @desc initial Plugins
@@ -202,11 +207,11 @@ export default class Core {
 
   async readyPlugins() {
     this.setStage(ICoreStage.init)
-    const extraPlugins = cloneDeep(this.initPlugins)
+    this.extraPlugins = cloneDeep(this.initPlugins)
 
     this.setStage(ICoreStage.initPlugins)
-    while (extraPlugins.length) {
-      const { path, apply } = extraPlugins.shift()!
+    while (this.extraPlugins.length) {
+      const { path, apply } = this.extraPlugins.shift()!
 
       const api = new Proxy(new Api({ path, core: this }), {
         get: (target, prop: string) => {
@@ -253,7 +258,7 @@ export default class Core {
       // `reverse` to ensure the order of plugins
       if (Array.isArray(rest) && rest.length) {
         rest.reverse().forEach((path) => {
-          extraPlugins.unshift(pathToRegister(path))
+          this.extraPlugins.unshift(pathToRegister(path))
         })
       }
     }
