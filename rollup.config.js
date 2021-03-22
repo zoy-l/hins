@@ -14,7 +14,8 @@ const externalTypes = [
   'clear-module',
   'lodash.uniq',
   'chokidar',
-  'slash'
+  'slash',
+  'joi'
 ]
 
 /**
@@ -22,7 +23,7 @@ const externalTypes = [
  */
 export default {
   input: path.resolve(__dirname, 'src/index.ts'),
-  external: ['fsevents', ...Object.keys(require('./package.json').dependencies)],
+  external: ['fsevents', 'joi', ...Object.keys(require('./package.json').dependencies)],
   plugins: [
     copy({
       targets: [
@@ -40,6 +41,11 @@ export default {
           src: 'node_modules/clear-module/index.d.ts',
           dest: 'dist',
           rename: 'clear-module.d.ts'
+        },
+        {
+          src: 'node_modules/joi/lib/index.d.ts',
+          dest: 'dist',
+          rename: 'joi.d.ts'
         }
       ]
     }),
@@ -68,6 +74,7 @@ export default {
         ]
       }
     }),
+
     commonjs({ extensions: ['.js'] }),
     json()
   ],
@@ -78,15 +85,7 @@ export default {
 }
 
 // 'resolve',
-// 'slash',
 // 'chalk',
-// 'joi'
-
-// {
-//   src: 'node_modules/joi/lib/index.d.ts',
-//   dest: 'dist',
-//   rename: 'joi.d.ts'
-// },
 
 // {
 //   src: 'node_modules/@types/resolve/index.d.ts',

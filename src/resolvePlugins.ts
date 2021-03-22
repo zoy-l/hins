@@ -6,9 +6,12 @@ import fs from 'fs'
 import { compatESModuleRequire, flatDeep } from './tools'
 import { IResolvePlugins } from './types'
 
+/**
+ * @desc Get the execution function of the plug-in, add path as the unique key value
+ * @param path
+ */
 export function pathToRegister(path: string) {
   assert(fs.existsSync(path), `${path} not exists, pathToRegister failed`)
-
   return {
     path: slash(path),
     apply() {
@@ -21,6 +24,10 @@ export function pathToRegister(path: string) {
   }
 }
 
+/**
+ * @desc Get all plugins
+ * @param options
+ */
 export default function resolvePlugins(options: IResolvePlugins) {
   const plugins = flatDeep(
     [options.plugins, options.userConfigPlugins].filter(Boolean)

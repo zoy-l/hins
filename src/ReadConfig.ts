@@ -127,7 +127,7 @@ export default class Config {
       clearModule(configFile)
       babelRegister(configFile)
 
-      return { ...compatESModuleRequire(require(configFile)) }
+      return compatESModuleRequire(require(configFile))
     }
 
     return {}
