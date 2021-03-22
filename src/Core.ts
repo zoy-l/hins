@@ -6,7 +6,7 @@ import path from 'path'
 
 import resolvePlugins, { pathToRegister } from './resolvePlugins'
 import ReadConfig from './ReadConfig'
-import withEnv from './withEnv'
+import env from './env'
 import Api from './Api'
 import type {
   IConfigPlugins,
@@ -145,7 +145,7 @@ export default class Core {
     // duplicate processing, no need to deal with it later
     this.babelRegister(uniq(this.initPlugins.map((plugin) => plugin.path)))
 
-    withEnv(path.join(this.cwd, '.env'))
+    env(path.join(this.cwd, '.env'))
   }
 
   async applyHooks(options: ICoreApplyHook) {
@@ -160,7 +160,6 @@ export default class Core {
     }
 
     const hooks = this.hooksByPluginId[key] ?? []
-
     const waterFall = new AsyncSeriesWaterfallHook(['memo'])
 
     // Add hook method into the actuator

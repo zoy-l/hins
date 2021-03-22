@@ -124,6 +124,8 @@ export default class Config {
     const configFile = this.getConfigFile()
 
     if (configFile) {
+      // clear the require cache
+      // load babelRegister if there is
       clearModule(configFile)
       babelRegister(configFile)
 

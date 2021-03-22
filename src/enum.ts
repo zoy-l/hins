@@ -15,11 +15,10 @@ export enum ICoreApplyHookTypes {
 }
 
 export const CoreAttribute = [
-  'ApplyPluginsType',
+  'ApplyHookType',
   'babelRegister',
   'applyPlugins',
   'initConfig',
-  'hasPlugins',
   'coreStage',
   'config',
   'paths',

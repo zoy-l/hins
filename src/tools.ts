@@ -38,6 +38,6 @@ function funcString(value: typeof Function | Record<string, any>) {
   return value
 }
 
-export function isEqual(value: any, other: any) {
+export function isEqual<T, U>(value: T, other: U) {
   return isequal(funcString(value), funcString(other))
 }
