@@ -13,7 +13,8 @@ const externalTypes = [
   'lodash.merge',
   'clear-module',
   'lodash.uniq',
-  'chokidar'
+  'chokidar',
+  'slash'
 ]
 
 /**
@@ -25,6 +26,11 @@ export default {
   plugins: [
     copy({
       targets: [
+        {
+          src: 'node_modules/slash/index.d.ts',
+          dest: 'dist',
+          rename: 'slash.d.ts'
+        },
         {
           src: 'node_modules/chokidar/types/index.d.ts',
           dest: 'dist',
@@ -86,12 +92,6 @@ export default {
 //   src: 'node_modules/@types/resolve/index.d.ts',
 //   dest: 'dist',
 //   rename: 'resolve.d.ts'
-// },
-
-// {
-//   src: 'node_modules/slash/index.d.ts',
-//   dest: 'dist',
-//   rename: 'slash.d.ts'
 // },
 
 // {
