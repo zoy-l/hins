@@ -9,7 +9,7 @@
     "test": "nerd test",
     "nerd": "nerd build --watch",
     "build": "node ./scripts/build.js",
-    "build-joi": "webpack -c ./scripts/buildjoi.js",
+    "build-joi": "webpack -c ./scripts/build-joi.js",
     "build-bundle": "rollup -c",
     "update:deps": "yarn upgrade-interactive --latest"
   },
