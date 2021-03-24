@@ -3,6 +3,7 @@ import uniq from 'lodash.uniq'
 import assert from 'assert'
 import path from 'path'
 
+import { ICoreStage, CoreAttribute, ICoreApplyHookTypes, Cycle } from './enum'
 import resolvePlugins, { pathToRegister } from './resolvePlugins'
 import ReadConfig from './ReadConfig'
 import AsyncHook from './AsyncHook'
@@ -21,7 +22,6 @@ import type {
   IHook,
   IMethods
 } from './types'
-import { ICoreStage, CoreAttribute, ICoreApplyHookTypes, Cycle } from './enum'
 
 export default class Core {
   /**
@@ -80,11 +80,6 @@ export default class Core {
   coreStage = ICoreStage
 
   /**
-   * @desc the final processed config
-   */
-  initConfig: IConfig = {}
-
-  /**
    * @desc internal Plugins
    */
   internalPlugins: IConfigPlugins
@@ -132,12 +127,7 @@ export default class Core {
   }
 
   init() {
-    // This is just to read the config without any verification.
-    // The storage is for later processing the config
-    // and also to initialize the user plugins
-    this.initConfig = this.configInstance.getUserConfig()
     this.initPlugins = resolvePlugins({
-      userConfigPlugins: this.initConfig.plugins,
       plugins: this.internalPlugins,
       cwd: this.cwd
     })
@@ -280,7 +270,7 @@ export default class Core {
     this.config = await this.applyHooks({
       key: 'modifyConfig',
       type: this.ApplyHookType.modify,
-      initialValue: this.configInstance.getConfig(this.initConfig, defaultConfig)
+      initialValue: this.configInstance.getConfig(defaultConfig)
     })
 
     this.configInstance.watchConfig()
