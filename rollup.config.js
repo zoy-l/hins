@@ -1,18 +1,19 @@
 import nodeResolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 import commonjs from '@rollup/plugin-commonjs'
+import { terser } from 'rollup-plugin-terser'
 import json from '@rollup/plugin-json'
 import copy from 'rollup-plugin-copy'
 import ts from 'typescript'
 import path from 'path'
 
 const externalTypes = [
-  'lodash.isplainobject',
-  'lodash.clonedeep',
-  'lodash.isequal',
-  'lodash.merge',
+  // 'lodash.isplainobject',
+  // 'lodash.clonedeep',
+  // 'lodash.isequal',
+  // 'lodash.merge',
   'clear-module',
-  'lodash.uniq',
+  // 'lodash.uniq',
   'chokidar',
   'slash',
   'joi'
@@ -62,7 +63,14 @@ export default {
               if (ts.isStringLiteral(node)) {
                 if (externalTypes.includes(node.text)) {
                   const literal = node.text.split('.')
+
                   return ts.createStringLiteral(`./${literal[literal.length - 1]}`)
+                }
+              }
+
+              if (ts.isImportDeclaration(node)) {
+                if (/lodash\./.test(node.moduleSpecifier.text)) {
+                  node = ''
                 }
               }
 
@@ -74,9 +82,9 @@ export default {
         ]
       }
     }),
-
     commonjs({ extensions: ['.js'] }),
-    json()
+    json(),
+    terser()
   ],
   output: {
     dir: path.resolve(__dirname, 'dist'),

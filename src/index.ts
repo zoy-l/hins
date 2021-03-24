@@ -26,20 +26,3 @@ export {
   uniq,
   joi
 }
-
-type clonedeep = <T>(value: T) => T
-
-type isplainobject = (value?: any) => boolean
-
-type uniq = (array: any[] | null | undefined) => any[]
-
-type isEqual = (arg0: any, arg1: any) => boolean
-
-type merge = <T, U>(
-  arg0: T,
-  arg1: U
-) => T extends Record<string, any>
-  ? U extends Record<string, any>
-    ? T & U
-    : never
-  : never

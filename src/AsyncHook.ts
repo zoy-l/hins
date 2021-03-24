@@ -79,7 +79,7 @@ export default class AsyncHook {
 
   private callTapsSeries() {
     let code = ''
-    const onDone = 'resolve();'
+    const onDone = 'resolve(memo);'
     let current = onDone
 
     for (let index = this.taps.length - 1; index >= 0; index--) {
@@ -99,7 +99,7 @@ export default class AsyncHook {
         if(rest${index} !== undefined){
           memo = rest${index}
         }
-        ${unroll ? `next${index}()` : 'resolve(memo)'};
+        ${unroll ? `next${index}()` : onDone};
       },(err)=>{
         if (hasResult${index}){
           throw err

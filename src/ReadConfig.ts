@@ -28,7 +28,8 @@ export default class Config {
     this.possibleConfigName = options.possibleConfigName
   }
 
-  getConfig(defaultConfig: Record<string, any>) {
+  getConfig() {
+    const defaultConfig = this.getDefaultConfig()
     const userConfig = this.getUserConfig()
     const { stage, plugins } = this.core
 
@@ -152,7 +153,7 @@ export default class Config {
 
       watcher.on('all', async (event, paths) => {
         console.log(chalk.bgGray(` ${event} `), paths)
-        const newConfig = this.getConfig(this.getDefaultConfig())
+        const newConfig = this.getConfig()
 
         if (!isEqual(newConfig, config)) {
           await watcher.close()

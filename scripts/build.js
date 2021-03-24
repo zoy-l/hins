@@ -31,13 +31,30 @@ const buildBundle = new Promise((rs, rj) => {
 
 Promise.all([buildBundle, buildJoi]).then(() => {
   console.log(chalk.cyan(`Build introduce joi`))
-  const cwd = path.join(__dirname, '../dist/index.js')
+  const cwd = (paths) => path.join(__dirname, paths)
 
-  const file = fs.readFileSync(cwd, 'utf-8')
+  const file = fs.readFileSync(cwd('../dist/index.js'), 'utf-8')
+  const type = fs.readFileSync(cwd('../dist/index.d.ts'), 'utf-8')
 
   fs.writeFileSync(
-    cwd,
+    cwd('../dist/index.js'),
     file.toString().replace(`require('joi')`, `require('./joi')`),
+    'utf-8'
+  )
+
+  fs.writeFileSync(
+    cwd('../dist/index.d.ts'),
+    type.toString() +
+      `
+declare function clonedeep<T>(value: T): T
+declare function isplainobject(value?: any): boolean
+declare function uniq(array: any[] | null | undefined): any[]
+declare function isEqual(arg0: any, arg1: any): boolean
+declare function merge<T, U>(
+  arg0: T,
+  arg1: U
+): T extends Record<string, any> ? (U extends Record<string, any> ? T & U : never) : never
+      `,
     'utf-8'
   )
   console.log(chalk.green(`Build completed`))

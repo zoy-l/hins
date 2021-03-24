@@ -1,11 +1,15 @@
-// const { Core } = require('../dist')
-const { Core } = require('../lib/index')
-const babelRegister = require('./BabelRegister')
+const { Core, isplainobject } = require('../dist')
 
-const core = new Core({
-  possibleConfigName: ['./examples/config.js'],
-  plugins: ['./examples/test-foo'],
-  babelRegister
-})
+// import { Core, isplainobject } from '../dist/index.js'
+// const { Core } = require('../lib/index')
+// const babelRegister = require('./BabelRegister')
 
-core.start({})
+console.log(isplainobject('123'))
+
+// const core = new Core({
+//   possibleConfigName: ['./examples/config.js'],
+//   plugins: ['./examples/test-foo'],
+//   babelRegister
+// })
+
+// core.start({})

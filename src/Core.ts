@@ -104,6 +104,14 @@ export default class Core {
    */
   isWatch: boolean
 
+  /**
+   * @name Core
+   * @param { Function } options.babelRegister - provide config runtime. `type:Function`
+   * @param { Array } options.possibleConfigName - config name path `type:string[]`
+   * @param { Array } options.plugins Array - default plugin `type:string[]`
+   * @param { boolean } options.isWatch - watch config `type:boolean`
+   * @param { string } options.cwd - work path `type:string`
+   */
   constructor(options: ICore) {
     this.isWatch = options.isWatch ?? true
     this.cwd = options.cwd ?? process.cwd()
@@ -202,10 +210,7 @@ export default class Core {
 
       const api = new Proxy(new Api({ path, core: this }), {
         get: (target, prop: string) => {
-          if (
-            (prop === 'initConfig' || prop === 'config') &&
-            this.stage < ICoreStage.pluginReady
-          ) {
+          if (prop === 'config' && this.stage < ICoreStage.pluginReady) {
             console.warn(`Cannot get config before plugin registration`)
           }
           // the plugin Method has the highest weight,
@@ -261,21 +266,21 @@ export default class Core {
     // merge defaults
     // verify config value
     this.setStage(ICoreStage.getConfig)
-    const defaultConfig = await this.applyHooks({
-      key: 'modifyDefaultConfig',
-      type: this.ApplyHookType.modify,
-      initialValue: this.configInstance.getDefaultConfig()
-    })
 
     this.config = await this.applyHooks({
       key: 'modifyConfig',
       type: this.ApplyHookType.modify,
-      initialValue: this.configInstance.getConfig(defaultConfig)
+      initialValue: this.configInstance.getConfig()
     })
 
     this.configInstance.watchConfig()
   }
 
+  /**
+   * @name start
+   * @param { string } options.args - other argument.
+   * @param { string } options.command - command
+   */
   async start(options: ICoreStart) {
     const { args, command } = options
     this.args = options
@@ -283,6 +288,7 @@ export default class Core {
     this.init()
 
     await this.readyPlugins()
+
     await this.readyConfig()
 
     this.setStage(ICoreStage.run)

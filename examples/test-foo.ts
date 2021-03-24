@@ -9,7 +9,7 @@ export default (api) => {
     }
   })
 
-  api.onPluginReady(() => {
-    // console.log(api.initConfig)
-  })
+  // api.modifyDefaultConfig((memo: any) => {
+  //   console.log(memo)
+  // })
 }

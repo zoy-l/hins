@@ -41,12 +41,16 @@ export default class Api {
 
   registerCommand(options: ICommands) {
     const { commands } = this.core
-    const { command } = options
+    const { command, alias } = options
     assert(
       !commands[command],
       `api.registerCommand() failed, the command ${command} is exists.`
     )
     commands[command] = options
+
+    if (alias) {
+      commands[alias] = options
+    }
   }
 
   registerPlugins(plugins: IConfigPlugins | IPlugin) {
@@ -84,7 +88,6 @@ export default class Api {
 
   register(options: Omit<IHook, 'pluginId'>) {
     const { hooksByPluginId } = this.core
-
     assert(
       options.key && typeof options.key === 'string',
       `api.register() failed, hook.key must supplied and should be string, but got ${options.key}.`

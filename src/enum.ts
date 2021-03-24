@@ -17,21 +17,13 @@ export enum ICoreApplyHookTypes {
 export const CoreAttribute = [
   'ApplyHookType',
   'babelRegister',
-  'applyPlugins',
-  'initConfig',
+  'applyHooks',
   'coreStage',
   'config',
   'paths',
   'stage',
   'args',
-  'env',
   'cwd'
 ]
 
-export const Cycle = [
-  'onPluginReady',
-  'modifyPaths',
-  'onStart',
-  'modifyDefaultConfig',
-  'modifyConfig'
-]
+export const Cycle = ['onPluginReady', 'modifyPaths', 'modifyConfig', 'onStart']

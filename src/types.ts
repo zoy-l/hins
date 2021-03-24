@@ -59,6 +59,7 @@ export interface IAsyncHook extends IHookCommon {
  */
 export interface ICommands {
   command: string
+  alias?: string
   description?: string
   fn: { (args: IArgs): any }
 }

@@ -8,7 +8,7 @@ import { IResolvePlugins } from './types'
 
 /**
  * @desc Get the execution function of the plug-in, add path as the unique key value
- * @param path
+ * @param { string } path string
  */
 export function pathToRegister(path: string) {
   assert(fs.existsSync(path), `${path} not exists, pathToRegister failed`)
@@ -26,7 +26,7 @@ export function pathToRegister(path: string) {
 
 /**
  * @desc Get all plugins
- * @param options
+ * @param { object } options object
  */
 export default function resolvePlugins(options: IResolvePlugins) {
   const plugins = flatDeep(
