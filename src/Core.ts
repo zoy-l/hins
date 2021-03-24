@@ -1,4 +1,3 @@
-import { AsyncSeriesWaterfallHook } from 'tapable'
 import cloneDeep from 'lodash.clonedeep'
 import uniq from 'lodash.uniq'
 import assert from 'assert'
@@ -6,6 +5,7 @@ import path from 'path'
 
 import resolvePlugins, { pathToRegister } from './resolvePlugins'
 import ReadConfig from './ReadConfig'
+import AsyncHook from './AsyncHook'
 import env from './env'
 import Api from './Api'
 import type {
@@ -160,21 +160,19 @@ export default class Core {
     }
 
     const hooks = this.hooksByPluginId[key] ?? []
-    const waterFall = new AsyncSeriesWaterfallHook(['memo'])
+    const asyncHook = new AsyncHook()
 
     // Add hook method into the actuator
     // Prepare for later
-    const apply = (func: (hook: IHook) => (memo: any[] | any) => Promise<any>) => {
-      hooks.forEach((hook) => {
-        waterFall.tapPromise(
-          {
-            name: hook.pluginId,
-            stage: hook.stage ?? 0,
-            before: hook.before
-          },
-          func(hook)
-        )
-      })
+    const apply = (func: (hook: IHook) => (memo: any) => Promise<any>) => {
+      asyncHook.tap(
+        hooks.map((hook) => ({
+          before: hook.before,
+          name: hook.pluginId,
+          stage: hook.stage,
+          fn: func(hook)
+        }))
+      )
     }
 
     // `add` requires return values, these return values will eventually be combined into an array
@@ -201,7 +199,7 @@ export default class Core {
         )
     }
 
-    return waterFall.promise(initialValue) as Promise<any>
+    return asyncHook.tapCall(initialValue)
   }
 
   async readyPlugins() {

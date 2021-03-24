@@ -1,14 +1,9 @@
 import { IAsyncHook } from './types'
 
 export default class AsyncHook {
-  taps: IAsyncHook[] = []
+  private taps: IAsyncHook[] = []
 
-  funcs: IAsyncHook['fn'][] = []
-
-  constructor() {
-    this.taps = []
-    this.funcs = []
-  }
+  private funcs: IAsyncHook['fn'][] = []
 
   tap(options: IAsyncHook[]) {
     options.forEach((item) => {
@@ -21,7 +16,7 @@ export default class AsyncHook {
     return this.create()(value)
   }
 
-  insert(options: IAsyncHook) {
+  private insert(options: IAsyncHook) {
     let before
     if (typeof options.before === 'string') {
       before = new Set([options.before])
@@ -62,7 +57,7 @@ export default class AsyncHook {
     this.taps[index] = options
   }
 
-  create() {
+  private create() {
     const content = this.callTapsSeries()
 
     const code = `const fn = this.funcs;
@@ -82,7 +77,7 @@ export default class AsyncHook {
     return new Function('memo', code).bind(this)
   }
 
-  callTapsSeries() {
+  private callTapsSeries() {
     let code = ''
     const onDone = 'resolve();'
     let current = onDone
