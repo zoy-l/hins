@@ -3,6 +3,8 @@
   "extends": ["zmi/typescript"],
   "rules": {
     "global-require": "off",
-    "import/no-dynamic-require": "off"
+    "import/no-dynamic-require": "off",
+    "no-new-func": "off",
+    "no-continue": "off"
   }
 }

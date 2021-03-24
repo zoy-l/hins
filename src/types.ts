@@ -31,14 +31,27 @@ export type INonEmpty<T extends Record<string, any>> = {
 export type IMethods = { (...args: any[]): any | Promise<any> }
 
 /**
- * @desc Specific execution hook object
+ * @desc Specific execution hook common object
  */
-export interface IHook {
-  pluginId: string
+interface IHookCommon {
   before?: string
   stage?: number
   fn: IMethods
+}
+
+/**
+ * @desc Specific execution hook object
+ */
+export interface IHook extends IHookCommon {
+  pluginId: string
   key: string
+}
+
+/**
+ * @desc Hook internal parameters
+ */
+export interface IAsyncHook extends IHookCommon {
+  name: string
 }
 
 /**

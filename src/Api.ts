@@ -73,10 +73,11 @@ export default class Api {
 
     pluginMethods[name] =
       fn ??
-      function (this: Api, method: () => void) {
+      function (this: Api, hookOptions: Omit<IHook, 'pluginId'> | (() => any)) {
+        const hook = typeof hookOptions === 'function' ? { fn: hookOptions } : hookOptions
         this.register({
           key: name,
-          fn: method
+          ...hook
         })
       }
   }
