@@ -7,17 +7,7 @@ import copy from 'rollup-plugin-copy'
 import ts from 'typescript'
 import path from 'path'
 
-const externalTypes = [
-  // 'lodash.isplainobject',
-  // 'lodash.clonedeep',
-  // 'lodash.isequal',
-  // 'lodash.merge',
-  'clear-module',
-  // 'lodash.uniq',
-  'chokidar',
-  'slash',
-  'joi'
-]
+const externalTypes = ['clear-module', 'chokidar', 'slash', 'joi']
 
 /**
  * @type { import('rollup').RollupOptions }
