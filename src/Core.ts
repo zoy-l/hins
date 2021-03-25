@@ -104,6 +104,12 @@ export default class Core {
    */
   isWatch: boolean
 
+  applyAddHooks: (options: Omit<ICoreApplyHook, 'type'>) => Promise<any>
+
+  applyModifyHooks: (options: Omit<ICoreApplyHook, 'type'>) => Promise<any>
+
+  applyEventHooks: (options: Omit<ICoreApplyHook, 'type'>) => Promise<any>
+
   /**
    * @name Core
    * @param { Function } options.babelRegister - provide config runtime. `type:Function`
@@ -117,6 +123,15 @@ export default class Core {
     this.cwd = options.cwd ?? process.cwd()
     this.internalPlugins = options.plugins ?? []
     this.babelRegister = options.babelRegister ?? (() => {})
+
+    this.applyAddHooks = (options) =>
+      this.applyHooks({ ...options, type: ICoreApplyHookTypes.add })
+
+    this.applyModifyHooks = (options) =>
+      this.applyHooks({ ...options, type: ICoreApplyHookTypes.modify })
+
+    this.applyEventHooks = (options) =>
+      this.applyHooks({ ...options, type: ICoreApplyHookTypes.event })
 
     this.configInstance = new ReadConfig({
       possibleConfigName: options.possibleConfigName ?? [],
@@ -148,13 +163,15 @@ export default class Core {
 
   async applyHooks(options: ICoreApplyHook) {
     const { add, modify, event } = this.ApplyHookType
-    const { key, type, args, initialValue } = options
+    const { key, type, args } = options
+    let { initialValue } = options
 
-    if (type === add && initialValue !== undefined) {
-      assert(
-        Array.isArray(initialValue),
-        'when ApplyHooksType is `add`, initialValue must be an array'
-      )
+    if (type === add && initialValue && !Array.isArray(initialValue)) {
+      throw new Error('when ApplyHooksType is `add`, initialValue must be an array')
+    }
+
+    if (type === add && initialValue === undefined) {
+      initialValue = []
     }
 
     const hooks = this.hooksByPluginId[key] ?? []
@@ -226,7 +243,8 @@ export default class Core {
                 : this[prop]
               : target[prop])
           )
-        }
+        },
+        set: () => false
       })
 
       // Plugin is cached here for checking
@@ -248,8 +266,8 @@ export default class Core {
       // It represents a collection of plugins added to the top of extraPlugins
       // Path verification pathToRegister has been done
       // `reverse` to ensure the order of plugins
-      if (Array.isArray(rest) && rest.length) {
-        rest.reverse().forEach((path) => {
+      if (rest && Array.isArray(rest.plugins) && rest.plugins.length) {
+        rest.plugins.reverse().forEach((path) => {
           this.extraPlugins.unshift(pathToRegister(path))
         })
       }

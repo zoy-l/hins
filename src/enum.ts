@@ -15,6 +15,9 @@ export enum ICoreApplyHookTypes {
 }
 
 export const CoreAttribute = [
+  'applyModifyHooks',
+  'applyEventHooks',
+  'applyAddHooks',
   'ApplyHookType',
   'babelRegister',
   'applyHooks',

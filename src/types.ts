@@ -34,7 +34,7 @@ export type IMethods = { (...args: any[]): any | Promise<any> }
  * @desc Specific execution hook common object
  */
 interface IHookCommon {
-  before?: string
+  before?: string | string[]
   stage?: number
   fn: IMethods
 }
@@ -95,7 +95,12 @@ export interface IPlugin {
   path: string
   key?: string
   apply: {
-    (): (api: IApi) => undefined | IConfigPlugins | Promise<undefined | IConfigPlugins>
+    (): (
+      api: IApi
+    ) =>
+      | undefined
+      | { plugins: IConfigPlugins }
+      | Promise<undefined | { plugins: IConfigPlugins }>
   }
   config?: {
     default?: any

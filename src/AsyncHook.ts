@@ -8,7 +8,10 @@ export default class AsyncHook {
   tap(options: IAsyncHook[]) {
     options.forEach((item) => {
       this.insert(item)
-      this.funcs.push(item.fn)
+    })
+
+    this.taps.forEach(({ fn }) => {
+      this.funcs.push(fn)
     })
   }
 
@@ -42,7 +45,7 @@ export default class AsyncHook {
           continue
         }
         if (before.size > 0) {
-          continue
+          throw new Error(`key name not found: ${[...before].join(', ')}`)
         }
       }
 

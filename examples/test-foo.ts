@@ -1,15 +1,20 @@
-export default (api) => {
-  api.describe({
-    key: 'cache',
-    config: {
-      default: 'memory',
-      schema(joi) {
-        return joi.valid('memory', 'filesystem')
-      }
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+module.exports = function (api) {
+  api.register({
+    key: 'test',
+    fn: (memo) => memo.concat('a')
+  })
+  api.register({
+    key: 'test',
+    fn: async (memo) => {
+      console.warn(memo)
+      await delay(100)
+      return memo.concat('b')
     }
   })
-
-  // api.modifyDefaultConfig((memo: any) => {
-  //   console.log(memo)
-  // })
+  api.register({
+    key: 'test',
+    fn: (memo) => memo.concat(['c', 'd'])
+  })
 }

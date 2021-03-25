@@ -15,11 +15,7 @@ export function pathToRegister(path: string) {
   return {
     path: slash(path),
     apply() {
-      try {
-        return compatESModuleRequire(require(path))
-      } catch (err) {
-        throw new Error(`Register plugin ${path} failed, since ${err.message}`)
-      }
+      return compatESModuleRequire(require(path))
     }
   }
 }

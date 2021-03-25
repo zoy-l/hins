@@ -42,9 +42,13 @@ export default class Config {
 
     const keepKeys = {}
     // get config
-    Object.keys(plugins).forEach((id) => {
-      const { key, config = {} } = plugins[id]
+    Object.keys(plugins).forEach((plugin) => {
+      const { key, config = {} } = plugins[plugin]
       const value = userConfig[key]
+
+      if (!key) {
+        return
+      }
 
       if (!keepKeys[key]) {
         keepKeys[key] = key
@@ -53,7 +57,10 @@ export default class Config {
       }
 
       const schema = config.schema(Joi)
-      assert(Joi.isSchema(schema), `schema return from plugin ${id} is not valid schema.`)
+      assert(
+        Joi.isSchema(schema),
+        `schema return from plugin ${plugin} is not valid schema.`
+      )
       const { error } = schema.validate(value)
 
       if (error) {
@@ -112,7 +119,7 @@ export default class Config {
     if (configFile) {
       if (env) {
         const ext = path.extname(configFile)
-        configFile = configFile.replace(ext, `.${env}.${ext}`)
+        configFile = configFile.replace(ext, `.${env}${ext}`)
       }
 
       return slash(path.join(cwd, configFile))

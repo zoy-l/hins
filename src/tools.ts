@@ -27,7 +27,7 @@ export function mergeDefault({ defaultConfig, config }: Record<string, any>) {
   return typeof config !== 'undefined' ? config : defaultConfig
 }
 
-function funcString(value: typeof Function | Record<string, any>) {
+export function funcString(value: typeof Function | Record<string, any>) {
   if (typeof value === 'function') return value.toString()
   if (isPlainObject(value)) {
     return Object.keys(value).reduce((memo, key) => {
