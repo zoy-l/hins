@@ -1,6 +1,7 @@
 import cloneDeep from 'lodash.clonedeep'
 import uniq from 'lodash.uniq'
 import assert from 'assert'
+import slash from 'slash'
 import path from 'path'
 
 import { ICoreStage, CoreAttribute, ICoreApplyHookTypes, Cycle } from './enum'
@@ -12,15 +13,16 @@ import Api from './Api'
 import type {
   IConfigPlugins,
   ICoreApplyHook,
+  ITypeHooks,
   ICoreStart,
   ICommands,
   INonEmpty,
   IWorkDir,
+  IMethods,
   IPlugin,
   IConfig,
   ICore,
-  IHook,
-  IMethods
+  IHook
 } from './types'
 
 export default class Core {
@@ -104,11 +106,20 @@ export default class Core {
    */
   isWatch: boolean
 
-  applyAddHooks: (options: Omit<ICoreApplyHook, 'type'>) => Promise<any>
+  /**
+   * @desc applyHooks shortcut
+   */
+  applyAddHooks: ITypeHooks
 
-  applyModifyHooks: (options: Omit<ICoreApplyHook, 'type'>) => Promise<any>
+  /**
+   * @desc applyHooks shortcut
+   */
+  applyModifyHooks: ITypeHooks
 
-  applyEventHooks: (options: Omit<ICoreApplyHook, 'type'>) => Promise<any>
+  /**
+   * @desc applyHooks shortcut
+   */
+  applyEventHooks: ITypeHooks
 
   /**
    * @name Core
@@ -156,7 +167,7 @@ export default class Core {
     })
 
     // duplicate processing, no need to deal with it later
-    this.babelRegister(uniq(this.initPlugins.map((plugin) => plugin.path)))
+    this.babelRegister(uniq(this.initPlugins.map((plugin) => slash(plugin.path))))
 
     env(path.join(this.cwd, '.env'))
   }

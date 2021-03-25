@@ -168,3 +168,7 @@ export interface IApiRegisterMethod {
   description?: string
   fn?: IMethods
 }
+
+export interface ITypeHooks {
+  (options: Omit<ICoreApplyHook, 'type'>): Promise<any>
+}
