@@ -7,7 +7,8 @@
   "scripts": {
     "debug": "node --inspect-brk ./examples/test.js",
     "test": "nerd test --coverage",
-    "nerd": "nerd build --watch",
+    "nerd": "nerd build",
+    "nerd-watch": "nerd build --watch",
     "build": "node ./scripts/build.js",
     "build-joi": "webpack -c ./scripts/build-joi.js",
     "build-bundle": "rollup -c",
