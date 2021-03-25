@@ -1,4 +1,5 @@
 import path from 'path'
+import slash from 'slash'
 
 import Core from '../src/Core'
 import { ICoreApplyHookTypes } from '../src/enum'
@@ -31,7 +32,7 @@ test('normal', async () => {
     'onStart'
   ])
 
-  expect(core.internalPlugins.map((paths) => paths.replace(cwd, ''))).toEqual([
+  expect(core.internalPlugins.map((paths) => slash(paths.replace(cwd, '')))).toEqual([
     '/plugins_1/index.js',
     '/plugins_2/index.js',
     '/plugin_1.js',
