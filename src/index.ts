@@ -10,8 +10,8 @@ import slash from 'slash'
 import chalk from 'chalk'
 import joi from 'joi'
 
+import type { IApi } from './types'
 import Core from './Core'
-import { IApi } from './types'
 
 export {
   isplainobject,

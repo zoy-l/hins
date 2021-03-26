@@ -14,8 +14,14 @@ import type {
 } from './types'
 
 export default class Api {
+  /**
+   * @desc as an identifier
+   */
   path: IApiOpitons['path']
 
+  /**
+   * @desc Core prototype
+   */
   core: IApiOpitons['core']
 
   constructor(options: IApiOpitons) {
@@ -59,6 +65,7 @@ export default class Api {
       `api.registerPlugins() failed, it should only be used in registering stage.`
     )
     assert(Array.isArray(plugins), `api.registerPlugins() failed, plugins must be Array.`)
+    // dynamic registration support after processing
     const extraPlugins = plugins.map((plugin) =>
       typeof plugin === 'string' ? pathToRegister(plugin) : plugin
     )

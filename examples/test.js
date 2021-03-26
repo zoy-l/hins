@@ -12,11 +12,17 @@ const core = new Core({
 
 // core.args = 1
 
-core
-  .applyModifyHooks({
-    key: 'test',
-    initialValue: []
-  })
-  .then((res) => {
-    console.log(res)
-  })
+core.init()
+
+core.readyPlugins().then(() => {
+  console.log(core.initPlugins)
+})
+
+// core
+//   .applyModifyHooks({
+//     key: 'test',
+//     initialValue: []
+//   })
+//   .then((res) => {
+//     console.log(res)
+//   })

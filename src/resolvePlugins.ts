@@ -4,7 +4,7 @@ import slash from 'slash'
 import fs from 'fs'
 
 import { compatESModuleRequire, flatDeep } from './tools'
-import { IResolvePlugins } from './types'
+import type { IResolvePlugins } from './types'
 
 /**
  * @desc Get the execution function of the plug-in, add path as the unique key value
