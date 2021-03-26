@@ -321,7 +321,7 @@ export default class Core {
 
     await this.readyConfig()
 
-    this.setStage(ICoreStage.run)
+    this.setStage(ICoreStage.start)
     await this.applyHooks({
       key: 'onStart',
       type: this.ApplyHookType.event,

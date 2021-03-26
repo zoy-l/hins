@@ -4,8 +4,7 @@ export enum ICoreStage {
   initPlugins,
   pluginReady,
   getConfig,
-  getPaths,
-  run
+  start
 }
 
 export enum ICoreApplyHookTypes {
