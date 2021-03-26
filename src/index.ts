@@ -11,6 +11,7 @@ import chalk from 'chalk'
 import joi from 'joi'
 
 import Core from './Core'
+import { IApi } from './types'
 
 export {
   isplainobject,
@@ -23,6 +24,7 @@ export {
   slash,
   chalk,
   Core,
+  IApi,
   uniq,
   joi
 }

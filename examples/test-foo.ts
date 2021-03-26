@@ -1,6 +1,8 @@
+import { IApi } from '../lib'
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-module.exports = function (api) {
+module.exports = function (api: IApi) {
   api.register({
     key: 'test',
     fn: (memo) => memo.concat('a')

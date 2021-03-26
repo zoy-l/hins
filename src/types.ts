@@ -1,17 +1,20 @@
 import { Root, Schema } from 'joi'
 
-import { ICoreApplyHookTypes } from './enum'
+import { ICoreApplyHookTypes, CoreAttribute, Cycle } from './enum'
 import Core from './Core'
+import Api from './Api'
 
+type IUserValue = any
 /**
  * @desc Current working directory
  */
+
 export type IWorkDir = string
 
 /**
  * @desc Current parameter
  */
-export type IArgs = Record<string, any>
+export type IArgs = Record<string, IUserValue>
 
 /**
  * @desc Plugins that need to be registered
@@ -28,7 +31,7 @@ export type INonEmpty<T extends Record<string, any>> = {
 /**
  * @desc Generally refers to the plugin method
  */
-export type IMethods = { (...args: any[]): any | Promise<any> }
+export type IMethods = { (...args: any[]): IUserValue | Promise<IUserValue> }
 
 /**
  * @desc Specific execution hook common object
@@ -61,7 +64,7 @@ export interface ICommands {
   command: string
   alias?: string
   description?: string
-  fn: { (args: IArgs): any }
+  fn: { (args: IArgs): IUserValue }
 }
 
 /**
@@ -85,7 +88,7 @@ export interface IReadConfig {
  * @desc The default object structure of config
  */
 export interface IConfig {
-  [key: string]: any
+  [key: string]: IUserValue
 }
 
 /**
@@ -96,15 +99,15 @@ export interface IPlugin {
   key?: string
   apply: {
     (): (
-      api: IApi
+      api: IApiOpitons
     ) =>
       | undefined
       | { plugins: IConfigPlugins }
       | Promise<undefined | { plugins: IConfigPlugins }>
   }
   config?: {
-    default?: any
-    schema?: {
+    default?: IUserValue
+    schema: {
       (joi: Root): Schema
     }
   }
@@ -134,7 +137,7 @@ export interface ICoreStart {
  */
 export interface ICoreApplyHook {
   type: ICoreApplyHookTypes
-  initialValue?: any
+  initialValue?: IUserValue
   key: string
   args?: IArgs
 }
@@ -142,10 +145,17 @@ export interface ICoreApplyHook {
 /**
  * @desc Api constructor type
  */
-export interface IApi {
+export interface IApiOpitons {
   core: Core
   path: string
 }
+
+/**
+ * @desc Exposed to the outside
+ */
+export type IApi = Pick<Core, typeof CoreAttribute[number]> &
+  Omit<Api, 'core'> &
+  { [key in typeof Cycle[number]]: IMethods }
 
 /**
  * @desc Api describe method type
@@ -153,7 +163,7 @@ export interface IApi {
 export interface IApiDescribe {
   key: string
   config: {
-    default?: any
+    default?: IUserValue
     schema: {
       (joi: Root): Schema
     }
@@ -170,5 +180,5 @@ export interface IApiRegisterMethod {
 }
 
 export interface ITypeHooks {
-  (options: Omit<ICoreApplyHook, 'type'>): Promise<any>
+  (options: Omit<ICoreApplyHook, 'type'>): Promise<IUserValue>
 }

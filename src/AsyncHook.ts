@@ -1,9 +1,15 @@
 import { IAsyncHook } from './types'
 
 export default class AsyncHook {
-  private taps: IAsyncHook[] = []
+  /**
+   * @desc subscribed hook object
+   */
+  taps: IAsyncHook[] = []
 
-  private funcs: IAsyncHook['fn'][] = []
+  /**
+   * @desc hook execution function after serialization
+   */
+  funcs: IAsyncHook['fn'][] = []
 
   tap(options: IAsyncHook[]) {
     options.forEach((item) => {
@@ -19,7 +25,10 @@ export default class AsyncHook {
     return this.create()(value)
   }
 
-  private insert(options: IAsyncHook) {
+  insert(options: IAsyncHook) {
+    // serialized taps
+    // sort according to before or stage
+    // return new taps
     let before
     if (typeof options.before === 'string') {
       before = new Set([options.before])
@@ -44,6 +53,7 @@ export default class AsyncHook {
           before.delete(tapFunc.name)
           continue
         }
+        // Invalid key
         if (before.size > 0) {
           throw new Error(`key name not found: ${[...before].join(', ')}`)
         }
@@ -60,7 +70,8 @@ export default class AsyncHook {
     this.taps[index] = options
   }
 
-  private create() {
+  create() {
+    // create chain calls
     const content = this.callTapsSeries()
 
     const code = `const fn = this.funcs;
@@ -80,7 +91,7 @@ export default class AsyncHook {
     return new Function('memo', code).bind(this)
   }
 
-  private callTapsSeries() {
+  callTapsSeries() {
     let code = ''
     const onDone = 'resolve(memo);'
     let current = onDone

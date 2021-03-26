@@ -7,18 +7,18 @@ import type {
   IApiRegisterMethod,
   IConfigPlugins,
   IApiDescribe,
+  IApiOpitons,
   ICommands,
   IPlugin,
-  IHook,
-  IApi
+  IHook
 } from './types'
 
 export default class Api {
-  path: IApi['path']
+  path: IApiOpitons['path']
 
-  core: IApi['core']
+  core: IApiOpitons['core']
 
-  constructor(options: IApi) {
+  constructor(options: IApiOpitons) {
     const { path, core } = options
 
     this.path = path

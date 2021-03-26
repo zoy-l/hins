@@ -135,6 +135,7 @@ export default class Core {
     this.internalPlugins = options.plugins ?? []
     this.babelRegister = options.babelRegister ?? (() => {})
 
+    // apply hooks alias for easy use
     this.applyAddHooks = (options) =>
       this.applyHooks({ ...options, type: ICoreApplyHookTypes.add })
 
@@ -149,8 +150,8 @@ export default class Core {
       core: this
     })
 
+    // Initialize the registration lifecycle hook
     const cycle = new Api({ path: 'internal', core: this })
-
     Cycle.forEach((name) => {
       cycle.registerMethod({ name })
     })
@@ -248,7 +249,7 @@ export default class Core {
           // to achieve the effect of registration and use
           return (
             this.pluginMethods[prop] ??
-            (CoreAttribute.includes(prop)
+            (CoreAttribute.includes(prop as typeof CoreAttribute[number])
               ? typeof this[prop] === 'function'
                 ? this[prop].bind(this)
                 : this[prop]
@@ -302,7 +303,7 @@ export default class Core {
       initialValue: this.configInstance.getConfig()
     })
 
-    this.configInstance.watchConfig()
+    this.isWatch && this.configInstance.watchConfig()
   }
 
   /**
