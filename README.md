@@ -78,9 +78,59 @@ core.start({ ...arguments })
 
 每个 plugin 都会接受一个 api 实例参数
 
-**register({ key: string, fn: Function, pluginId?: string, before?: string, stage?: number }) 为 api.applyHooks 注册可供其使用的 hook**
+### describe 注册阶段执行，用于描述插件或插件集的 key、配置信息、启用方式等
 
-e.g.
+参数:
+
+```
+{
+  key: string,
+  config: {
+    default: any,
+    schema: (joi) => {
+      return joi.string()
+    }
+  }
+}
+```
+
+```js
+api.describe({
+  key: 'history',
+  config: {
+    default: 'browser',
+    schema(joi) {
+      return joi.string()
+    }
+  }
+})
+```
+
+```js
+// config
+export default {
+  history: 'node'
+}
+```
+
+注：
+
+- config.default 为配置的默认值，用户没有配置时取这个
+- config.schema 用于声明配置的类型，基于 joi，如果你希望用户进行配置，这个是必须的，否则用户的配置无效
+
+### register 为 api.applyHooks 注册可供其使用的 hook
+
+参数:
+
+```
+{
+  key: string,
+  fn: Function,
+  pluginId?: string,
+  before?: string,
+  stage?: number
+}
+```
 
 ```js
 // 可同步
@@ -137,7 +187,18 @@ api.applyEventHooks({
 })
 ```
 
-**applyHooks({ key: string, type:api.ApplyHookType, initialValue?: any, args?: any }) 取得 register 注册的 hooks 执行后的数据**
+### applyHooks 取得 register 注册的 hooks 执行后的数据
+
+参数:
+
+```
+{
+  key: string,
+  type:api.ApplyHookType,
+  initialValue?: any,
+  args?: any
+}
+```
 
 相同 key 可能有多个 hook, api.ApplyHookType.add 会返回所有 hook 的数组合值
 
@@ -150,7 +211,7 @@ const foo = await api.applyHooks({
 console.log(foo) // ['a', 'b']
 ```
 
-**registerPlugins( plugins: string[] ) 注册插件，参数为路径数组**
+### registerPlugins(plugins: string[]) 注册插件，参数为路径数组
 
 ```js
 api.registerPlugins([
@@ -159,7 +220,17 @@ api.registerPlugins([
 ])
 ```
 
-**registerCommand({ command: string, alias?: string, fn: Function }) 注册命令**
+### registerCommand 注册命令
+
+参数:
+
+```
+{
+  command: string,
+  alias?: string,
+  fn: function
+}
+```
 
 ```js
 api.registerCommand({
@@ -173,7 +244,7 @@ api.registerCommand({
 
 alias 为别名，比如 generate 的别名 g fn 的参数为 { args }
 
-**registerMethod({ name: string, fn?: Function, exitsError?: boolean })**
+### registerMethod({ name: string, fn?: Function, exitsError?: boolean })
 
 往 api 上注册方法。可以是 api.register() 的快捷使用方式，便于调用；也可以不是，如果有提供 fn，则执行 fn 定义的函数。
 
