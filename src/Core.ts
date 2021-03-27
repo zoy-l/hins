@@ -286,9 +286,8 @@ export default class Core {
     }
 
     this.setStage(ICoreStage.pluginReady)
-    await this.applyHooks({
-      key: 'onPluginReady',
-      type: this.ApplyHookType.event
+    await this.applyEventHooks({
+      key: 'onPluginReady'
     })
   }
 
@@ -297,9 +296,8 @@ export default class Core {
     // verify config value
     this.setStage(ICoreStage.getConfig)
 
-    this.config = await this.applyHooks({
+    this.config = await this.applyModifyHooks({
       key: 'modifyConfig',
-      type: this.ApplyHookType.modify,
       initialValue: this.configInstance.getConfig()
     })
 
@@ -315,17 +313,22 @@ export default class Core {
     const { args, command, reloadCommand } = options
     this.args = options
 
+    // sometimes it needs to be distributed
+    // for example:
+    // Register an empty command,
+    // execute the operation in the command plugin,
+    // and then decide which command to execute
     if (!reloadCommand) {
       this.init()
 
       await this.readyPlugins()
-
       await this.readyConfig()
 
       this.setStage(ICoreStage.start)
-      await this.applyHooks({
+      // potential problems,
+      // do you need to repeat the implementation here to be verified
+      await this.applyEventHooks({
         key: 'onStart',
-        type: this.ApplyHookType.event,
         args: { args }
       })
     }
