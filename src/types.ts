@@ -27,6 +27,16 @@ export type IConfigPlugins = string[]
 export type IChangeTypes = 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir'
 
 /**
+ * @desc plugin config
+ */
+export type IPluginConfig = {
+  default?: IUserValue
+  schema: {
+    (joi: Root): Schema
+  }
+}
+
+/**
  * @desc Tool type, change the object type to mandatory
  */
 export type INonEmpty<T extends Record<string, any>> = {
@@ -110,12 +120,7 @@ export interface IPlugin {
       | { plugins: IConfigPlugins }
       | Promise<undefined | { plugins: IConfigPlugins }>
   }
-  config?: {
-    default?: IUserValue
-    schema: {
-      (joi: Root): Schema
-    }
-  }
+  config?: IPluginConfig
 }
 
 /**
@@ -169,12 +174,7 @@ export type Hins = Core & Omit<Api, 'core'> & { [key in typeof Cycle[number]]: I
  */
 export interface IApiDescribe {
   key: string
-  config: {
-    default?: IUserValue
-    schema: {
-      (joi: Root): Schema
-    }
-  }
+  config: IPluginConfig
 }
 
 /**
@@ -182,7 +182,6 @@ export interface IApiDescribe {
  */
 export interface IApiRegisterMethod {
   name: string
-  description?: string
   fn?: IMethods
 }
 

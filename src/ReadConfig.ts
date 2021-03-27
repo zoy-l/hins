@@ -42,12 +42,13 @@ export default class Config {
     const keepKeys = {}
     // get config
     Object.keys(plugins).forEach((plugin) => {
-      const { key, config = {} } = plugins[plugin]
-      const value = userConfig[key]
+      const { key, config } = plugins[plugin]
 
-      if (!key) {
+      if (!key || !config) {
         return
       }
+
+      const value = userConfig[key]
 
       if (!keepKeys[key]) {
         keepKeys[key] = key
@@ -100,7 +101,10 @@ export default class Config {
 
     // collect default config
     return Object.keys(plugins).reduce((memo, pluginId) => {
-      const { key, config = {} } = plugins[pluginId]
+      const { key, config } = plugins[pluginId]
+
+      if (!key || !config) return memo
+
       if ('default' in config) memo[key] = config.default
       return memo
     }, {})

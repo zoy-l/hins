@@ -39,7 +39,7 @@ export default class Core {
   /**
    * @desc registered Plugins
    */
-  plugins: IPlugin[] = []
+  plugins: Record<string, IPlugin> = {}
 
   /**
    * @desc list of plugins when registering,
