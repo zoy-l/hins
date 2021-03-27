@@ -1,6 +1,5 @@
 {
   "name": "hins",
-  "private": true,
   "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,6 +18,7 @@
     "nerd-watch": "nerd build --watch",
     "build": "node ./scripts/build.js",
     "build-joi": "webpack -c ./scripts/build-joi.js",
+    "build-bundle:watch": "rollup -c -w",
     "build-bundle": "rollup -c",
     "update:deps": "yarn upgrade-interactive --latest"
   },

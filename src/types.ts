@@ -1,6 +1,6 @@
 import { Root, Schema } from 'joi'
 
-import { ICoreApplyHookTypes, CoreAttribute, Cycle } from './enum'
+import { ICoreApplyHookTypes, Cycle } from './enum'
 import Core from './Core'
 import Api from './Api'
 
@@ -130,6 +130,7 @@ export interface ICore {
 export interface ICoreStart {
   args?: IArgs
   command: string
+  reloadCommand?: boolean
 }
 
 /**
@@ -153,9 +154,7 @@ export interface IApiOpitons {
 /**
  * @desc Exposed to the outside
  */
-export type IApi = Pick<Core, typeof CoreAttribute[number]> &
-  Omit<Api, 'core'> &
-  { [key in typeof Cycle[number]]: IMethods }
+export type IApi = Core & Omit<Api, 'core'> & { [key in typeof Cycle[number]]: IMethods }
 
 /**
  * @desc Api describe method type

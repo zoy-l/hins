@@ -214,6 +214,18 @@ test('core start', async () => {
   expect(await core.start({ command: 'test' })).toEqual('test command')
 })
 
+test('repeatedly core start', async () => {
+  const cwd = path.join(fixtures, 'core-start')
+  const core = new Core({
+    cwd,
+    plugins: [path.join(cwd, 'foo1.js')]
+  })
+  await core.start({ command: 'test' })
+  const command = await core.start({ command: 'test', reloadCommand: true })
+
+  expect(command).toEqual('test command')
+})
+
 test('core start alisa', async () => {
   const cwd = path.join(fixtures, 'core-start')
   const core = new Core({

@@ -4,7 +4,7 @@ import assert from 'assert'
 import slash from 'slash'
 import path from 'path'
 
-import { ICoreStage, CoreAttribute, ICoreApplyHookTypes, Cycle } from './enum'
+import { ICoreStage, ICoreApplyHookTypes, Cycle } from './enum'
 import resolvePlugins, { pathToRegister } from './resolvePlugins'
 import ReadConfig from './ReadConfig'
 import AsyncHook from './AsyncHook'
@@ -249,14 +249,13 @@ export default class Core {
           // to achieve the effect of registration and use
           return (
             this.pluginMethods[prop] ??
-            (CoreAttribute.includes(prop as typeof CoreAttribute[number])
+            (this[prop]
               ? typeof this[prop] === 'function'
                 ? this[prop].bind(this)
                 : this[prop]
               : target[prop])
           )
-        },
-        set: () => false
+        }
       })
 
       // Plugin is cached here for checking
@@ -279,6 +278,7 @@ export default class Core {
       // Path verification pathToRegister has been done
       // `reverse` to ensure the order of plugins
       if (rest && Array.isArray(rest.plugins) && rest.plugins.length) {
+        this.babelRegister(rest.plugins)
         rest.plugins.reverse().forEach((path) => {
           this.extraPlugins.unshift(pathToRegister(path))
         })
@@ -312,21 +312,23 @@ export default class Core {
    * @param { string } options.command - command
    */
   async start(options: ICoreStart) {
-    const { args, command } = options
+    const { args, command, reloadCommand } = options
     this.args = options
 
-    this.init()
+    if (!reloadCommand) {
+      this.init()
 
-    await this.readyPlugins()
+      await this.readyPlugins()
 
-    await this.readyConfig()
+      await this.readyConfig()
 
-    this.setStage(ICoreStage.start)
-    await this.applyHooks({
-      key: 'onStart',
-      type: this.ApplyHookType.event,
-      args: { args }
-    })
+      this.setStage(ICoreStage.start)
+      await this.applyHooks({
+        key: 'onStart',
+        type: this.ApplyHookType.event,
+        args: { args }
+      })
+    }
 
     const event = this.commands[command]
     assert(event, `start command failed, command "${command}" does not exists.`)

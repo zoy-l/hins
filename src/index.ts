@@ -10,7 +10,7 @@ import slash from 'slash'
 import chalk from 'chalk'
 import joi from 'joi'
 
-import type { IApi } from './types'
+import { IApi } from './types'
 import Core from './Core'
 
 export {

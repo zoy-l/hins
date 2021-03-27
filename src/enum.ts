@@ -13,18 +13,4 @@ export enum ICoreApplyHookTypes {
   event = 'event'
 }
 
-export const CoreAttribute = <const>[
-  'applyModifyHooks',
-  'applyEventHooks',
-  'applyAddHooks',
-  'ApplyHookType',
-  'babelRegister',
-  'applyHooks',
-  'coreStage',
-  'config',
-  'stage',
-  'args',
-  'cwd'
-]
-
 export const Cycle = <const>['onPluginReady', 'modifyPaths', 'modifyConfig', 'onStart']
