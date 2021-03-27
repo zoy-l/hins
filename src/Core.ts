@@ -104,7 +104,7 @@ export default class Core {
   /**
    * @desc monitor config
    */
-  isWatch: boolean
+  watchConfig: ICore['watchConfig']
 
   /**
    * @desc applyHooks shortcut
@@ -126,11 +126,19 @@ export default class Core {
    * @param { Function } options.babelRegister - provide config runtime. `type:Function`
    * @param { Array } options.possibleConfigName - config name path `type:string[]`
    * @param { Array } options.plugins Array - default plugin `type:string[]`
-   * @param { boolean } options.isWatch - watch config `type:boolean`
+   * @param { object } options.isWatch - watch config `type:object`
    * @param { string } options.cwd - work path `type:string`
    */
   constructor(options: ICore) {
-    this.isWatch = options.isWatch ?? true
+    // text prompt when watch config
+    this.watchConfig = options.watchConfig ?? {
+      changeLog: (event, paths) => {
+        console.log(` ${event} `, paths)
+      },
+      reloadLog: () => {
+        console.log(`Try to restart...`)
+      }
+    }
     this.cwd = options.cwd ?? process.cwd()
     this.internalPlugins = options.plugins ?? []
     this.babelRegister = options.babelRegister ?? (() => {})
@@ -301,7 +309,7 @@ export default class Core {
       initialValue: this.configInstance.getConfig()
     })
 
-    this.isWatch && this.configInstance.watchConfig()
+    this.watchConfig && this.configInstance.watchConfig()
   }
 
   /**

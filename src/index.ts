@@ -10,9 +10,9 @@ import slash from 'slash'
 import chalk from 'chalk'
 import joi from 'joi'
 
-import { IApi } from './types'
 import Core from './Core'
 
+export * from './types'
 export {
   isplainobject,
   clearModule,
@@ -24,7 +24,6 @@ export {
   slash,
   chalk,
   Core,
-  IApi,
   uniq,
   joi
 }

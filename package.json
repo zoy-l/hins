@@ -1,6 +1,6 @@
 {
   "name": "hins",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -20,7 +20,8 @@
     "build-joi": "webpack -c ./scripts/build-joi.js",
     "build-bundle:watch": "rollup -c -w",
     "build-bundle": "rollup -c",
-    "update:deps": "yarn upgrade-interactive --latest"
+    "update:deps": "yarn upgrade-interactive --latest",
+    "release": "node ./scripts/release.js"
   },
   "devDependencies": {
     "@babel/core": "^7.13.10",
@@ -59,10 +60,10 @@
     "webpack": "^5.28.0",
     "webpack-cli": "^4.5.0",
     "yorkie": "^2.0.0",
-    "zmi-nerd": "^1.2.2-3"
+    "zmi-nerd": "^1.2.2-3",
+    "chalk": "^4.1.0"
   },
   "dependencies": {
-    "chalk": "^4.1.0",
     "resolve": "^1.20.0"
   },
   "optionalDependencies": {

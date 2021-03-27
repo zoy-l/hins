@@ -1,7 +1,6 @@
 import clearModule from 'clear-module'
 import chokidar from 'chokidar'
 import assert from 'assert'
-import chalk from 'chalk'
 import slash from 'slash'
 import path from 'path'
 import Joi from 'joi'
@@ -145,7 +144,7 @@ export default class Config {
   }
 
   watchConfig() {
-    const { cwd, config, args } = this.core
+    const { cwd, config, args, watchConfig } = this.core
 
     const configFile = this.getConfigFile()
 
@@ -159,13 +158,13 @@ export default class Config {
       })
 
       watcher.on('all', async (event, paths) => {
-        console.log(chalk.bgGray(` ${event} `), paths)
+        watchConfig?.changeLog(event, paths)
         const newConfig = this.getConfig()
 
         if (!isEqual(newConfig, config)) {
           await watcher.close()
           this.core.start(args!)
-          console.log(chalk.gray(`🎯 Try to restart...`))
+          watchConfig?.reloadLog(event, paths)
         }
       })
     }

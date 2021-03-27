@@ -1,8 +1,8 @@
-import { IApi } from '../lib'
+import { Hins } from '../lib'
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-module.exports = function (api: IApi) {
+module.exports = function (api: Hins) {
   api.register({
     key: 'test',
     fn: (memo) => memo.concat('a')

@@ -22,6 +22,11 @@ export type IArgs = Record<string, IUserValue>
 export type IConfigPlugins = string[]
 
 /**
+ * @desc chokidar change types
+ */
+export type IChangeTypes = 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir'
+
+/**
  * @desc Tool type, change the object type to mandatory
  */
 export type INonEmpty<T extends Record<string, any>> = {
@@ -120,7 +125,10 @@ export interface ICore {
   babelRegister?: (path: string | string[]) => void
   possibleConfigName?: IWorkDir[]
   plugins?: IConfigPlugins
-  isWatch?: boolean
+  watchConfig?: {
+    changeLog: (type: IChangeTypes, path: string) => void
+    reloadLog: (type: IChangeTypes, path: string) => void
+  }
   cwd?: IWorkDir
 }
 
@@ -154,7 +162,7 @@ export interface IApiOpitons {
 /**
  * @desc Exposed to the outside
  */
-export type IApi = Core & Omit<Api, 'core'> & { [key in typeof Cycle[number]]: IMethods }
+export type Hins = Core & Omit<Api, 'core'> & { [key in typeof Cycle[number]]: IMethods }
 
 /**
  * @desc Api describe method type
