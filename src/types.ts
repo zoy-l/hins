@@ -107,11 +107,10 @@ export interface IConfig {
 }
 
 /**
- * @desc Registered plug-in object
+ * @desc Plugin to be executed
  */
-export interface IPlugin {
+export interface IApplyPlugin {
   path: string
-  key?: string
   apply: {
     (): (
       api: IApiOpitons
@@ -120,6 +119,13 @@ export interface IPlugin {
       | { plugins: IConfigPlugins }
       | Promise<undefined | { plugins: IConfigPlugins }>
   }
+}
+
+/**
+ * @desc Registered plug-in object
+ */
+export interface IPlugin extends IApplyPlugin {
+  key?: string
   config?: IPluginConfig
 }
 

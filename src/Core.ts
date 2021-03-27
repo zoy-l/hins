@@ -13,6 +13,7 @@ import Api from './Api'
 import type {
   IConfigPlugins,
   ICoreApplyHook,
+  IApplyPlugin,
   ITypeHooks,
   ICoreStart,
   ICommands,
@@ -44,12 +45,12 @@ export default class Core {
   /**
    * @desc list of plugins when registering,
    */
-  extraPlugins: IPlugin[] = []
+  extraPlugins: IApplyPlugin[] = []
 
   /**
    * @desc initial Plugins
    */
-  initPlugins: IPlugin[] = []
+  initPlugins: IApplyPlugin[] = []
 
   /**
    * @desc registered commands
