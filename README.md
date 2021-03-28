@@ -80,7 +80,7 @@ core.start({ ...arguments })
 
 ### describe 注册阶段执行，用于描述插件或插件集的 key、配置信息、启用方式等
 
-参数:
+参数: object
 
 ```
 {
@@ -120,7 +120,7 @@ export default {
 
 ### register 为 api.applyHooks 注册可供其使用的 hook
 
-参数:
+参数: object
 
 ```
 {
@@ -189,7 +189,7 @@ api.applyEventHooks({
 
 ### applyHooks 取得 register 注册的 hooks 执行后的数据
 
-参数:
+参数: object
 
 ```
 {
@@ -224,7 +224,7 @@ api.registerPlugins([
 
 ### registerCommand 注册命令
 
-参数:
+参数: object
 
 ```
 {
@@ -246,7 +246,16 @@ api.registerCommand({
 
 alias 为别名，比如 generate 的别名 g fn 的参数为 { args }
 
-### registerMethod({ name: string, fn?: Function, exitsError?: boolean })
+### registerMethod
+
+参数: object
+
+```
+{
+  name: string,
+  fn?: Function,
+}
+```
 
 往 api 上注册方法。可以是 api.register() 的快捷使用方式，便于调用；也可以不是，如果有提供 fn，则执行 fn 定义的函数。
 
