@@ -215,10 +215,12 @@ console.log(foo) // ['a', 'b']
 
 ```js
 api.registerPlugins([
-  { key: 'preset2', apply: () => () => {} },
+  { key: 'preset2', apply: (api) => {} },
   require.resolve('./preset_3')
 ])
 ```
+
+这里内联插件不会进行处理, 直接添加至待执行的插件列表, 因为插件的键名是依照文件路径生成的, 这里的 path 填一个唯一键名即可
 
 ### registerCommand 注册命令
 

@@ -5,6 +5,7 @@
     "global-require": "off",
     "import/no-dynamic-require": "off",
     "no-new-func": "off",
-    "no-continue": "off"
+    "no-continue": "off",
+    "no-restricted-syntax": "off"
   }
 }

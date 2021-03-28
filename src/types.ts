@@ -183,6 +183,22 @@ export interface IApiDescribe {
 }
 
 /**
+ * @desc Api registerPlugins options
+ */
+export type IApiRegisterPlugins = (
+  | string
+  | {
+      key: string
+      apply: (
+        api: Hins
+      ) =>
+        | undefined
+        | { plugins: IConfigPlugins }
+        | Promise<undefined | { plugins: IConfigPlugins }>
+    }
+)[]
+
+/**
  * @desc Api RegisterMethod method type
  */
 export interface IApiRegisterMethod {
@@ -190,6 +206,9 @@ export interface IApiRegisterMethod {
   fn?: IMethods
 }
 
+/**
+ * @desc applyHook convenience method
+ */
 export interface ITypeHooks {
   (options: Omit<ICoreApplyHook, 'type'>): Promise<IUserValue>
 }

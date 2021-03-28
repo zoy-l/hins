@@ -4,12 +4,11 @@ import { pathToRegister } from './resolvePlugins'
 import { ICoreStage } from './enum'
 
 import type {
+  IApiRegisterPlugins,
   IApiRegisterMethod,
-  IConfigPlugins,
   IApiDescribe,
   IApiOpitons,
   ICommands,
-  IPlugin,
   IHook
 } from './types'
 
@@ -59,16 +58,51 @@ export default class Api {
     }
   }
 
-  registerPlugins(plugins: IConfigPlugins | IPlugin) {
+  registerPlugins(plugins: IApiRegisterPlugins) {
     assert(
       this.core.stage === ICoreStage.initPlugins,
       `api.registerPlugins() failed, it should only be used in registering stage.`
     )
     assert(Array.isArray(plugins), `api.registerPlugins() failed, plugins must be Array.`)
     // dynamic registration support after processing
-    const extraPlugins = plugins.map((plugin) =>
-      typeof plugin === 'string' ? pathToRegister(plugin) : plugin
-    )
+    const keepKeys = {}
+    const extraPlugins = []
+
+    for (const plugin of plugins) {
+      if (typeof plugin === 'string') {
+        if (keepKeys[plugin]) {
+          continue
+        }
+        const applyPlugin = pathToRegister(plugin)
+
+        if (this.core.plugins[applyPlugin.path]) {
+          throw new Error(`Same plugin registered ${applyPlugin.path}`)
+        }
+
+        this.core.extraPlugins.forEach(({ path }) => {
+          if (path === applyPlugin.path) {
+            throw new Error(`Repeat the plugin to be registered ${applyPlugin.path}`)
+          }
+        })
+        keepKeys[plugin] = 1
+        extraPlugins.push(pathToRegister(plugin))
+
+        continue
+      }
+
+      if (!plugin.key || !plugin.apply) {
+        throw new Error(`Inline plugins must contain 'key' and 'apply'`)
+      }
+      if (keepKeys[plugin.key]) {
+        continue
+      }
+
+      keepKeys[plugin.key] = 1
+      extraPlugins.push({
+        path: plugin.key,
+        apply: () => plugin.apply
+      })
+    }
 
     this.core.extraPlugins.unshift(...extraPlugins)
   }
