@@ -24,21 +24,21 @@ const core = new Core({
 core.start({ ...arguments })
 ```
 
-> 接受参数:
+## 接受参数:
 
-**cwd**
+### cwd
 
 - 工作区路径
 - Type: string
 - Default: `process.cwd()`
 
-**babelRegister**
+### babelRegister
 
 - config 和 plugin 的运行时, 使其支持 ts 或 ESNext
 - Type: function
 - Default: `() => {}`
 
-**possibleConfigName**
+### possibleConfigName
 
 - 读取配置文件的路径及文件名
 - Type: string[]
@@ -52,7 +52,7 @@ core.start({ ...arguments })
 
 运行时就会去传入 **cwd** 根目录下找 **config.js** 文件并读取
 
-**plugins**
+### plugins
 
 - plugins 配置路径
 - Type: string[]
@@ -60,7 +60,7 @@ core.start({ ...arguments })
 
 可以是 **绝对路径** 或者 **相对路径**. 相对路径是相对传入的 **cwd** 参数
 
-**watchConfig**
+### watchConfig
 
 - 是否监听配置文件, 如果发现更改则重新运行命令
 - Type: object
@@ -74,7 +74,7 @@ core.start({ ...arguments })
   }
 ```
 
-> 核心方法:
+## 核心方法:
 
 每个 plugin 都会接受一个 api 实例参数
 
@@ -260,7 +260,7 @@ api.foo()
 // 'foo'
 ```
 
-> 周期钩子
+## 周期钩子
 
 <!-- 'onPluginReady', 'modifyConfig', 'onStart' -->
 

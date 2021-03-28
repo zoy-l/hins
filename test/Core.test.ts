@@ -27,7 +27,6 @@ test('normal', async () => {
 
   expect(Object.keys(core.pluginMethods)).toEqual([
     'onPluginReady',
-    'modifyPaths',
     'modifyConfig',
     'onStart'
   ])
