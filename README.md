@@ -24,7 +24,7 @@ const core = new Core({
 core.start({ ...arguments })
 ```
 
-接受参数:
+> 接受参数:
 
 **cwd**
 
@@ -74,7 +74,7 @@ core.start({ ...arguments })
   }
 ```
 
-方法:
+> 核心方法:
 
 每个 plugin 都会接受一个 api 实例参数
 
@@ -259,3 +259,42 @@ api.registerMethod({
 api.foo()
 // 'foo'
 ```
+
+> 周期钩子
+
+<!-- 'onPluginReady', 'modifyConfig', 'onStart' -->
+
+### onStart()
+
+在执行命令函数前触发。可以使用 config
+
+```js
+api.onStart(() => {
+  // do something
+})
+```
+
+### onPluginReady()
+
+在插件初始化完成触发。在 onStart 之前，此时 config 尚未解析好。
+
+```js
+api.onPluginReady(() => {
+  // do something
+})
+```
+
+### modifyConfig
+
+修改最终配置,参数为最终 config 配置
+
+```js
+api.modifyConfig((memo) => {
+  return {
+    ...memo,
+    ...defaultOptions
+  }
+})
+```
+
+修改后的值不会再做 schema 校验

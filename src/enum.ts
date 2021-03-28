@@ -13,4 +13,4 @@ export enum ICoreApplyHookTypes {
   event = 'event'
 }
 
-export const Cycle = <const>['onPluginReady', 'modifyPaths', 'modifyConfig', 'onStart']
+export const Cycle = <const>['onPluginReady', 'modifyConfig', 'onStart']
