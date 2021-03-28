@@ -25,9 +25,7 @@ export function pathToRegister(path: string) {
  * @param { object } options object
  */
 export default function resolvePlugins(options: IResolvePlugins) {
-  const plugins = flatDeep(
-    [options.plugins, options.userConfigPlugins].filter(Boolean)
-  ).map((path) =>
+  const plugins = flatDeep([...options.plugins].filter(Boolean)).map((path) =>
     resolve.sync(path, {
       basedir: options.cwd,
       extensions: ['.js', '.ts']

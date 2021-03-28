@@ -87,8 +87,7 @@ export interface ICommands {
  */
 export interface IResolvePlugins {
   cwd: IWorkDir
-  plugins?: IConfigPlugins
-  userConfigPlugins?: IConfigPlugins
+  plugins: IConfigPlugins
 }
 
 /**

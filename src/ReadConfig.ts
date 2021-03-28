@@ -38,8 +38,8 @@ export default class Config {
     )
 
     const userConfigKeys = Object.keys(userConfig)
-
     const keepKeys = {}
+
     // get config
     Object.keys(plugins).forEach((plugin) => {
       const { key, config } = plugins[plugin]
