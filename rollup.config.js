@@ -83,16 +83,9 @@ export default {
 }
 
 // 'resolve',
-// 'chalk',
 
 // {
 //   src: 'node_modules/@types/resolve/index.d.ts',
 //   dest: 'dist',
 //   rename: 'resolve.d.ts'
-// },
-
-// {
-//   src: 'node_modules/chalk/index.d.ts',
-//   dest: 'dist',
-//   rename: 'chalk.d.ts'
 // },

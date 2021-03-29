@@ -7,7 +7,6 @@ import chokidar from 'chokidar'
 import uniq from 'lodash.uniq'
 import resolve from 'resolve'
 import slash from 'slash'
-import chalk from 'chalk'
 import joi from 'joi'
 
 import Core from './Core'
@@ -22,7 +21,6 @@ export {
   isEqual,
   merge,
   slash,
-  chalk,
   Core,
   uniq,
   joi
