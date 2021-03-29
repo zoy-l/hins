@@ -24,6 +24,30 @@ const core = new Core({
 core.start({ ...arguments })
 ```
 
+### Core.start()
+
+参数: object
+
+```
+{
+  args?: object
+  command: string
+  reloadCommand?: boolean
+}
+```
+
+- args 接受任何参数, 类型是一个对象, 最后会传入命令插件
+- command 启动命令
+- reloadCommand 重新运行命令
+
+```js
+// 这里先执行了 dev 命令,进入到 dev 插件,
+core.start({ command: 'dev' })
+// 有的时候需要做命令派发, 在dev插件命令内 做了一些计算,
+// 最后得出执行webDev命令. 但是又不需要重新注册插件等前置步奏
+core.start({ command: 'webDev', reloadCommand: true })
+```
+
 ## 接受参数:
 
 ### cwd
