@@ -1,6 +1,6 @@
 # hins
 
-[![codecov](https://codecov.io/gh/l-zoy/hins/branch/main/graph/badge.svg)](https://codecov.io/gh/l-zoy/hins) [![GitHub license](https://img.shields.io/github/license/l-zoy/hins)](https://github.com/l-zoy/hins/blob/master/LICENSE)
+[![codecov](https://codecov.io/gh/l-zoy/hins/branch/main/graph/badge.svg)](https://codecov.io/gh/l-zoy/hins) [![GitHub license](https://img.shields.io/github/license/l-zoy/hins)](https://github.com/l-zoy/hins/blob/master/LICENSE) ![node-current](https://img.shields.io/node/v/zmi) [![<ORG_NAME>](https://circleci.com/gh/l-zoy/hins.svg?style=svg)](https://app.circleci.com/pipelines/github/l-zoy/hins)
 
 中间插件程序, 可以快速创建定制化 cli 工具
 
