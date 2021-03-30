@@ -4,12 +4,21 @@ import { ICoreApplyHookTypes, Cycle } from './enum'
 import Core from './Core'
 import Api from './Api'
 
+/**
+ * @desc Any key value
+ */
+type IKey = string
+
+/**
+ * @desc Any type entered on behalf of the user
+ */
 type IUserValue = any
+
 /**
  * @desc Current working directory
  */
-
 export type IWorkDir = string
+// The above just increases readability
 
 /**
  * @desc Current parameter
@@ -62,7 +71,7 @@ interface IHookCommon {
  */
 export interface IHook extends IHookCommon {
   pluginId: string
-  key: string
+  key: IKey
 }
 
 /**
@@ -76,18 +85,18 @@ export interface IAsyncHook extends IHookCommon {
  * @desc Registered command object
  */
 export interface ICommands {
+  fn: { (args: IArgs): IUserValue }
+  description?: string
   command: string
   alias?: string
-  description?: string
-  fn: { (args: IArgs): IUserValue }
 }
 
 /**
  * @desc Parameters received by the ResolvePlugins method
  */
 export interface IResolvePlugins {
-  cwd: IWorkDir
   plugins: IConfigPlugins
+  cwd: IWorkDir
 }
 
 /**
@@ -109,7 +118,7 @@ export interface IConfig {
  * @desc Plugin to be executed
  */
 export interface IApplyPlugin {
-  path: string
+  path: IWorkDir
   apply: {
     (): (
       api: IApiOpitons
@@ -124,31 +133,31 @@ export interface IApplyPlugin {
  * @desc Registered plug-in object
  */
 export interface IPlugin extends IApplyPlugin {
-  key?: string
   config?: IPluginConfig
+  key?: IKey
 }
 
 /**
  * @desc Core constructor type
  */
 export interface ICore {
-  babelRegister?: (path: string | string[]) => void
+  babelRegister?: (path: IWorkDir | IWorkDir[]) => void
   possibleConfigName?: IWorkDir[]
   plugins?: IConfigPlugins
+  cwd?: IWorkDir
   watchConfig?: {
     changeLog: (type: IChangeTypes, path: string) => void
     reloadLog: (type: IChangeTypes, path: string) => void
   }
-  cwd?: IWorkDir
 }
 
 /**
  * @desc Core start method type
  */
 export interface ICoreStart {
-  args?: IArgs
-  command: string
   reloadCommand?: boolean
+  command: string
+  args?: IArgs
 }
 
 /**
@@ -157,16 +166,16 @@ export interface ICoreStart {
 export interface ICoreApplyHook {
   type: ICoreApplyHookTypes
   initialValue?: IUserValue
-  key: string
   args?: IArgs
+  key: IKey
 }
 
 /**
  * @desc Api constructor type
  */
 export interface IApiOpitons {
+  path: IWorkDir
   core: Core
-  path: string
 }
 
 /**
@@ -178,17 +187,17 @@ export type Hins = Core & Omit<Api, 'core'> & { [key in typeof Cycle[number]]: I
  * @desc Api describe method type
  */
 export interface IApiDescribe {
-  key: string
   config: IPluginConfig
+  key: IKey
 }
 
 /**
  * @desc Api registerPlugins options
  */
 export type IApiRegisterPlugins = (
-  | string
+  | IWorkDir
   | {
-      key: string
+      key: IKey
       apply: (
         api: Hins
       ) =>
@@ -202,8 +211,8 @@ export type IApiRegisterPlugins = (
  * @desc Api RegisterMethod method type
  */
 export interface IApiRegisterMethod {
-  name: string
   fn?: IMethods
+  name: string
 }
 
 /**
