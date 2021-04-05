@@ -246,6 +246,9 @@ export default class Core {
     while (this.extraPlugins.length) {
       const { path, apply } = this.extraPlugins.shift()!
 
+      // guarantee that you can use it when you register
+      // may change later
+      // this is not very good
       const api = new Proxy(new Api({ path, core: this }), {
         get: (target, prop: string) => {
           if (prop === 'config' && this.stage < ICoreStage.pluginReady) {
