@@ -27,9 +27,9 @@ export default class Config {
     this.possibleConfigName = options.possibleConfigName
   }
 
-  getConfig() {
+  getConfig(userConfig: IConfig) {
     const defaultConfig = this.getDefaultConfig()
-    const userConfig = this.getUserConfig()
+
     const { stage, plugins } = this.core
 
     assert(
@@ -163,7 +163,7 @@ export default class Config {
 
       watcher.on('all', async (event, paths) => {
         watchConfig?.changeLog(event, paths)
-        const newConfig = this.getConfig()
+        const newConfig = this.getConfig(this.getUserConfig())
 
         if (!isEqual(newConfig, config)) {
           await watcher.close()

@@ -88,6 +88,11 @@ export default class Core {
   internalPlugins: IConfigPlugins
 
   /**
+   * @desc Initialize the configuration file, the config at this time is still to be verified
+   */
+  initConfig: IConfig = {}
+
+  /**
    * @desc the final processed config
    */
   config: IConfig = {}
@@ -158,6 +163,7 @@ export default class Core {
       possibleConfigName: options.possibleConfigName ?? [],
       core: this
     })
+    this.initConfig = this.configInstance.getUserConfig()
 
     // Initialize the registration lifecycle hook
     const cycle = new Api({ path: 'internal', core: this })
@@ -310,7 +316,7 @@ export default class Core {
 
     this.config = await this.applyModifyHooks({
       key: 'modifyConfig',
-      initialValue: this.configInstance.getConfig()
+      initialValue: this.configInstance.getConfig(this.initConfig)
     })
 
     this.watchConfig && this.configInstance.watchConfig()
