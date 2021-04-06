@@ -3,7 +3,7 @@ import chokidar from 'chokidar'
 import assert from 'assert'
 import slash from 'slash'
 import path from 'path'
-import Joi from 'joi'
+import joi from 'joi'
 import fs from 'fs'
 
 import { compatESModuleRequire, isEqual, mergeDefault } from './tools'
@@ -56,9 +56,9 @@ export default class Config {
         throw new Error(`have multiple same ${key}`)
       }
 
-      const schema = config.schema(Joi)
+      const schema = config.schema(joi)
       assert(
-        Joi.isSchema(schema),
+        joi.isSchema(schema),
         `schema return from plugin ${plugin} is not valid schema.`
       )
       const { error } = schema.validate(value)
