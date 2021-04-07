@@ -162,13 +162,17 @@ export default class Config {
       })
 
       watcher.on('all', async (event, paths) => {
-        watchConfig?.changeLog(event, paths)
-        const newConfig = this.getConfig(this.getUserConfig())
+        const initConfig = this.getUserConfig()
+        const newConfig = this.getConfig(initConfig)
+        const isReload = !isEqual(newConfig, config)
+        watchConfig.changeLog(event, paths, isReload)
 
-        if (!isEqual(newConfig, config)) {
+        if (isReload) {
+          watchConfig.reloadLog(event, paths)
+          this.core.initConfig = initConfig
+          this.core.config = newConfig
           await watcher.close()
           this.core.start(args!)
-          watchConfig?.reloadLog(event, paths)
         }
       })
     }

@@ -153,6 +153,7 @@ test('config watch', async () => {
   core.init()
   await core.readyPlugins()
   await core.readyConfig()
+  core.configInstance.watchConfig()
 
   require.cache[configPath].exports = { foo: 'bar key' }
   fs.writeFileSync(configPath, config.replace('foo key', 'bar key'), 'utf-8')
@@ -172,4 +173,16 @@ test('config watch', async () => {
   expect(is).toEqual(true)
 
   jest.resetAllMocks()
+})
+
+test('not-config-watch', async () => {
+  const cwd = path.join(fixtures, 'not-config-watch')
+
+  const core = new Core({
+    cwd,
+    possibleConfigName: ['config.js'],
+    plugins: [path.join(cwd, 'foo.js')]
+  })
+
+  core.configInstance.watchConfig()
 })

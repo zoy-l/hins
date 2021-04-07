@@ -38,7 +38,7 @@ Promise.all([buildBundle, buildJoi]).then(() => {
 
   fs.writeFileSync(
     cwd('../dist/index.js'),
-    file.toString().replace(`require('joi')`, `require('./joi')`),
+    file.toString().replace(/require\(("|')joi("|')\)/, `require("./joi")`),
     'utf-8'
   )
 

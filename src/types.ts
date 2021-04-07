@@ -146,7 +146,7 @@ export interface ICore {
   plugins?: IConfigPlugins
   cwd?: IWorkDir
   watchConfig?: {
-    changeLog: (type: IChangeTypes, path: string) => void
+    changeLog: (type: IChangeTypes, path: string, isReload: boolean) => void
     reloadLog: (type: IChangeTypes, path: string) => void
   }
 }
@@ -181,7 +181,7 @@ export interface IApiOpitons {
 /**
  * @desc Exposed to the outside
  */
-export type Hins = Core & Omit<Api, 'core'> & { [key in typeof Cycle[number]]: IMethods }
+export type Hins = Core & Api & { [key in typeof Cycle[number]]: IMethods }
 
 /**
  * @desc Api describe method type

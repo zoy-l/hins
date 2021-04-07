@@ -110,7 +110,7 @@ export default class Core {
   /**
    * @desc monitor config
    */
-  watchConfig: ICore['watchConfig']
+  watchConfig: INonEmpty<ICore>['watchConfig']
 
   /**
    * @desc applyHooks shortcut
@@ -318,8 +318,6 @@ export default class Core {
       key: 'modifyConfig',
       initialValue: this.configInstance.getConfig(this.initConfig)
     })
-
-    this.watchConfig && this.configInstance.watchConfig()
   }
 
   /**
