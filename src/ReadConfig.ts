@@ -1,4 +1,3 @@
-import clearModule from 'clear-module'
 import chokidar from 'chokidar'
 import assert from 'assert'
 import slash from 'slash'
@@ -138,7 +137,7 @@ export default class Config {
     if (configFile) {
       // clear the require cache
       // load babelRegister if there is
-      clearModule(configFile)
+      delete require.cache[configFile]
       babelRegister(configFile)
 
       return compatESModuleRequire(require(configFile))
@@ -164,6 +163,7 @@ export default class Config {
       watcher.on('all', async (event, paths) => {
         const initConfig = this.getUserConfig()
         const newConfig = this.getConfig(initConfig)
+
         const isReload = !isEqual(newConfig, config)
         watchConfig.changeLog(event, paths, isReload)
 

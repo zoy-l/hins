@@ -1,6 +1,5 @@
 import isplainobject from 'lodash.isplainobject'
 import clonedeep from 'lodash.clonedeep'
-import clearModule from 'clear-module'
 import isEqual from 'lodash.isequal'
 import merge from 'lodash.merge'
 import chokidar from 'chokidar'
@@ -14,7 +13,6 @@ import Core from './Core'
 export * from './types'
 export {
   isplainobject,
-  clearModule,
   clonedeep,
   chokidar,
   resolve,
