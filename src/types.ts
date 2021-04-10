@@ -174,14 +174,16 @@ export interface ICoreApplyHook {
  * @desc Api constructor type
  */
 export interface IApiOpitons {
-  path: IWorkDir
+  // path: IWorkDir
   core: Core
 }
 
 /**
  * @desc Exposed to the outside
  */
-export type Hins = Core & Api & { [key in typeof Cycle[number]]: IMethods }
+export type Hins = Omit<Core, 'ApiInstance'> &
+  Api &
+  { [key in typeof Cycle[number]]: IMethods }
 
 /**
  * @desc Api describe method type

@@ -128,6 +128,11 @@ export default class Core {
   applyEventHooks: ITypeHooks
 
   /**
+   * @desc api Instance
+   */
+  ApiInstance: Api
+
+  /**
    * @name Core
    * @param { Function } options.babelRegister - provide config runtime. `type:Function`
    * @param { Array } options.possibleConfigName - config name path `type:string[]`
@@ -165,14 +170,16 @@ export default class Core {
     })
     this.initConfig = this.configInstance.getUserConfig()
 
+    this.ApiInstance = new Api({ core: this })
+
     this.registerLifeCycle()
   }
 
   registerLifeCycle() {
     // Initialize the registration lifecycle hook
-    const cycle = new Api({ path: 'internal', core: this })
+    this.ApiInstance.path = 'internal'
     Cycle.forEach((name) => {
-      cycle.registerMethod({ name })
+      this.ApiInstance.registerMethod({ name })
     })
   }
 
@@ -255,14 +262,19 @@ export default class Core {
     this.setStage(ICoreStage.initPlugins)
     while (this.extraPlugins.length) {
       const { path, apply } = this.extraPlugins.shift()!
-
+      this.ApiInstance.path = path
       // guarantee that you can use it when you register
       // may change later
       // this is not very good
-      const api = new Proxy(new Api({ path, core: this }), {
+      const api = new Proxy(this.ApiInstance, {
         get: (target, prop: string) => {
           if (prop === 'config' && this.stage < ICoreStage.pluginReady) {
             console.warn(`Cannot get config before plugin registration`)
+          }
+
+          // circular reference here
+          if (prop === 'ApiInstance') {
+            return undefined
           }
           // the plugin Method has the highest weight,
           // followed by Service finally plugin API
@@ -359,11 +371,15 @@ export default class Core {
     return event.fn({ args })
   }
 
+  /**
+   * @name reset
+   * @desc In order not to fock here, you need to initialize the properties
+   */
   reset() {
-    this.pluginMethods = {}
-    this.hooksByPluginId = {}
-    this.plugins = {}
-    this.commands = {}
+    const property = ['hooksByPluginId', 'pluginMethods', 'plugins', 'commands']
+    property.forEach((key) => {
+      this[key] = {}
+    })
 
     this.registerLifeCycle()
   }

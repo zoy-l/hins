@@ -9,14 +9,15 @@ import type {
   IApiDescribe,
   IApiOpitons,
   ICommands,
-  IHook
+  IHook,
+  IWorkDir
 } from './types'
 
 export default class Api {
   /**
    * @desc as an identifier
    */
-  path: IApiOpitons['path']
+  path?: IWorkDir
 
   /**
    * @desc Core prototype
@@ -24,9 +25,9 @@ export default class Api {
   core: IApiOpitons['core']
 
   constructor(options: IApiOpitons) {
-    const { path, core } = options
+    const { core } = options
 
-    this.path = path
+    // this.path = path
     this.core = core
   }
 
@@ -39,6 +40,7 @@ export default class Api {
       options.config.schema && typeof options.config.schema === 'function',
       `api.describe() failed, the plugin is missing 'schema'`
     )
+    assert(this.path, `api.describe() failed, this.Path is not initialized`)
 
     plugins[this.path].key = key
     plugins[this.path].config = config
@@ -137,6 +139,7 @@ export default class Api {
       typeof options.fn === 'function',
       `api.register() failed, hook.fn must supplied and should be function, but got ${options.fn}.`
     )
+    assert(this.path, `api.register() failed, this.Path is not initialized`)
 
     hooksByPluginId[options.key] = (hooksByPluginId[options.key] ?? []).concat({
       pluginId: this.path,

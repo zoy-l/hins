@@ -117,3 +117,18 @@ test('api registerMethod should have the right plugin id', async () => {
 
   expect(Object.keys(core.hooksByPluginId)[0]).toContain('foo')
 })
+
+test('api ApiInstance can not access', async () => {
+  jest.resetAllMocks()
+
+  console.log = jest.fn((log) => {
+    expect(log).toEqual(undefined)
+  })
+  const cwd = path.join(fixtures, 'api-not-apiInstance')
+  const core = new Core({
+    cwd,
+    plugins: [require.resolve(path.join(cwd, 'foo'))]
+  })
+  core.init()
+  await core.readyPlugins()
+})
