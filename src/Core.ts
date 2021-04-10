@@ -165,6 +165,10 @@ export default class Core {
     })
     this.initConfig = this.configInstance.getUserConfig()
 
+    this.registerLifeCycle()
+  }
+
+  registerLifeCycle() {
     // Initialize the registration lifecycle hook
     const cycle = new Api({ path: 'internal', core: this })
     Cycle.forEach((name) => {
@@ -353,5 +357,14 @@ export default class Core {
     assert(event, `start command failed, command "${command}" does not exists.`)
 
     return event.fn({ args })
+  }
+
+  reset() {
+    this.pluginMethods = {}
+    this.hooksByPluginId = {}
+    this.plugins = {}
+    this.commands = {}
+
+    this.registerLifeCycle()
   }
 }

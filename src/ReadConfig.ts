@@ -170,9 +170,9 @@ export default class Config {
         if (isReload) {
           watchConfig.reloadLog(event, paths)
           this.core.initConfig = initConfig
-          this.core.config = newConfig
+          this.core.reset()
           await watcher.close()
-          this.core.start(args!)
+          this.core.start({ ...args!, reloadCommand: false })
         }
       })
     }
