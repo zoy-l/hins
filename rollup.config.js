@@ -7,7 +7,7 @@ import copy from 'rollup-plugin-copy'
 import ts from 'typescript'
 import path from 'path'
 
-const externalTypes = ['chokidar', 'slash', 'joi']
+const externalTypes = ['slash', 'joi']
 
 /**
  * @type { import('rollup').RollupOptions }
@@ -22,11 +22,6 @@ export default {
           src: 'node_modules/slash/index.d.ts',
           dest: 'dist',
           rename: 'slash.d.ts'
-        },
-        {
-          src: 'node_modules/chokidar/types/index.d.ts',
-          dest: 'dist',
-          rename: 'chokidar.d.ts'
         },
         {
           src: 'node_modules/joi/lib/index.d.ts',

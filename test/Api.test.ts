@@ -1,7 +1,7 @@
 import path from 'path'
+import slash from 'slash'
 
 import Core from '../src/Core'
-import slash from 'slash'
 
 const fixtures = path.join(__dirname, './fixtures')
 
