@@ -19,6 +19,7 @@ jobs:
           paths:
             - ./node_modules
             - ~/.cache/yarn
+      - run: yarn build
       - run: yarn nerd
       - run: yarn test --forceExit
       - run: bash <(curl -s https://codecov.io/bash)
