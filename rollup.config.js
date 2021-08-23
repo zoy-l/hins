@@ -68,7 +68,8 @@ export default {
   ],
   output: {
     dir: path.resolve(__dirname, 'dist'),
-    format: 'cjs'
+    format: 'cjs',
+    sourcemap: true
   }
 }
 
