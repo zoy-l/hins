@@ -137,8 +137,9 @@ export default class Config {
     if (configFile) {
       // clear the require cache
       // load babelRegister if there is
+      // babelRegister is initialized with default value processing
       delete require.cache[configFile]
-      babelRegister && babelRegister(configFile)
+      babelRegister(configFile)
 
       return compatESModuleRequire(require(configFile))
     }
