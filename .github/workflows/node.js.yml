@@ -36,6 +36,7 @@ jobs:
       - name: Setup install
         if: ${{ steps.cache.outputs.cache-hit != true }}
         run: yarn --ignore-engines
+      - run: yarn build
       - run: yarn nerd
       - run: yarn test --forceExit
         env:
