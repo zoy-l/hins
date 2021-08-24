@@ -16,6 +16,19 @@ const buildJoi = new Promise((rs, rj) => {
   })
 })
 
+const buildChokidar = new Promise((rs, rj) => {
+  console.log(chalk.cyan(`start Build chokidar`))
+  exec('yarn run build-chokidar', (err) => {
+    if (err) {
+      console.log(err)
+      rj(err)
+    } else {
+      rs()
+      console.log(chalk.green(`Build chokidar completed`))
+    }
+  })
+})
+
 const buildResolve = new Promise((rs, rj) => {
   console.log(chalk.cyan(`start Build resolve`))
   exec('yarn run build-resolve', (err) => {
@@ -42,7 +55,7 @@ const buildBundle = new Promise((rs, rj) => {
   })
 })
 
-Promise.all([buildBundle, buildJoi, buildResolve]).then(() => {
+Promise.all([buildBundle, buildJoi, buildResolve, buildChokidar]).then(() => {
   console.log(chalk.cyan(`Build introduce joi`))
   const cwd = (paths) => path.join(__dirname, paths)
 
@@ -54,7 +67,8 @@ Promise.all([buildBundle, buildJoi, buildResolve]).then(() => {
     file
       .toString()
       .replace(/require\(("|')joi("|')\)/, `require("./joi")`)
-      .replace(/require\(("|')resolve("|')\)/, `require("./resolve")`),
+      .replace(/require\(("|')resolve("|')\)/, `require("./resolve")`)
+      .replace(/require\(("|')chokidar("|')\)/, `require("./chokidar")`),
     'utf-8'
   )
 
