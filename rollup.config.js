@@ -7,7 +7,7 @@ import copy from 'rollup-plugin-copy'
 import ts from 'typescript'
 import path from 'path'
 
-const externalTypes = ['slash', 'joi', 'resolve', 'chokidar']
+const externalTypes = ['slash', 'joi', 'chokidar']
 
 /**
  * @type { import('rollup').RollupOptions }
@@ -17,7 +17,6 @@ export default {
   external: [
     'fsevents',
     'joi',
-    'resolve',
     'chokidar',
     ...Object.keys(require('./package.json').dependencies)
   ],
@@ -28,11 +27,6 @@ export default {
           src: 'node_modules/slash/index.d.ts',
           dest: 'dist',
           rename: 'slash.d.ts'
-        },
-        {
-          src: 'node_modules/@types/resolve/index.d.ts',
-          dest: 'dist',
-          rename: 'resolve.d.ts'
         },
         {
           src: 'node_modules/joi/lib/index.d.ts',
@@ -84,7 +78,7 @@ export default {
   ],
   output: {
     dir: path.resolve(__dirname, 'dist'),
-    format: 'cjs',
-    sourcemap: true
+    format: 'cjs'
+    // sourcemap: true
   }
 }

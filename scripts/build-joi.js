@@ -4,7 +4,7 @@ module.exports = {
   target: 'node',
   mode: 'production',
   entry: require.resolve('joi'),
-  devtool: 'source-map',
+  // devtool: 'source-map',
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: 'joi.js',
