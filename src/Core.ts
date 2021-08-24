@@ -332,7 +332,7 @@ export default class Core {
 
     this.config = await this.applyModifyHooks({
       key: 'modifyConfig',
-      initialValue: this.configInstance.getConfig(this.initConfig)
+      initialValue: this.configInstance.getPluginConfig(this.initConfig)
     })
   }
 

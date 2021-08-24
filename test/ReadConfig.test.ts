@@ -72,7 +72,9 @@ test('plugins no key', async () => {
   core.init()
   await core.readyPlugins()
 
-  expect(core.configInstance.getConfig(core.configInstance.getUserConfig())).toEqual({
+  expect(
+    core.configInstance.getPluginConfig(core.configInstance.getUserConfig())
+  ).toEqual({
     foo: 1
   })
 })
@@ -88,7 +90,7 @@ test('plugin multiple same key', async () => {
   await core.readyPlugins()
 
   try {
-    core.configInstance.getConfig(core.configInstance.getUserConfig())
+    core.configInstance.getPluginConfig(core.configInstance.getUserConfig())
   } catch (err) {
     expect(err.message).toEqual('have multiple same foo')
   }

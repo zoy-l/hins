@@ -295,6 +295,16 @@ api.foo()
 // 'foo'
 ```
 
+### configInstance
+
+```js
+    watchConfig(): void;
+    // 开启监听config文件
+
+    在插件里使用api.configInstance.watchConfig开启监听配置文件, 当修改时会重启
+
+```
+
 ## 周期钩子
 
 <!-- 'onPluginReady', 'modifyConfig', 'onStart' -->

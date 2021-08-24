@@ -26,14 +26,14 @@ export default class Config {
     this.possibleConfigName = options.possibleConfigName
   }
 
-  getConfig(userConfig: IConfig) {
-    const defaultConfig = this.getDefaultConfig()
+  getPluginConfig(userConfig: IConfig) {
+    const defaultConfig = this.getPluginDefaultConfig()
 
     const { stage, plugins } = this.core
 
     assert(
       stage >= ICoreStage.pluginReady,
-      `Config.getConfig() failed, it should not be executed before plugin is ready.`
+      `Config.getPluginConfig() failed, it should not be executed before plugin is ready.`
     )
 
     const userConfigKeys = Object.keys(userConfig)
@@ -95,7 +95,7 @@ export default class Config {
     return userConfig
   }
 
-  getDefaultConfig() {
+  getPluginDefaultConfig() {
     const { plugins } = this.core
 
     // collect default config
@@ -163,7 +163,7 @@ export default class Config {
 
       watcher.on('all', async (event, paths) => {
         const initConfig = this.getUserConfig()
-        const newConfig = this.getConfig(initConfig)
+        const newConfig = this.getPluginConfig(initConfig)
 
         const isReload = !isEqual(newConfig, config)
         watchConfig.changeLog(event, paths, isReload)
