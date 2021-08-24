@@ -16,6 +16,19 @@ const buildJoi = new Promise((rs, rj) => {
   })
 })
 
+const buildResolve = new Promise((rs, rj) => {
+  console.log(chalk.cyan(`start Build resolve`))
+  exec('yarn run build-resolve', (err) => {
+    if (err) {
+      console.log(err)
+      rj(err)
+    } else {
+      rs()
+      console.log(chalk.green(`Build resolve completed`))
+    }
+  })
+})
+
 const buildBundle = new Promise((rs, rj) => {
   console.log(chalk.cyan(`start Build bundle`))
   exec('yarn run build-bundle', (err) => {
@@ -29,7 +42,7 @@ const buildBundle = new Promise((rs, rj) => {
   })
 })
 
-Promise.all([buildBundle, buildJoi]).then(() => {
+Promise.all([buildBundle, buildJoi, buildResolve]).then(() => {
   console.log(chalk.cyan(`Build introduce joi`))
   const cwd = (paths) => path.join(__dirname, paths)
 
@@ -38,7 +51,10 @@ Promise.all([buildBundle, buildJoi]).then(() => {
 
   fs.writeFileSync(
     cwd('../dist/index.js'),
-    file.toString().replace(/require\(("|')joi("|')\)/, `require("./joi")`),
+    file
+      .toString()
+      .replace(/require\(("|')joi("|')\)/, `require("./joi")`)
+      .replace(/require\(("|')resolve("|')\)/, `require("./resolve")`),
     'utf-8'
   )
 

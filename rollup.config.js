@@ -7,14 +7,19 @@ import copy from 'rollup-plugin-copy'
 import ts from 'typescript'
 import path from 'path'
 
-const externalTypes = ['slash', 'joi']
+const externalTypes = ['slash', 'joi', 'resolve']
 
 /**
  * @type { import('rollup').RollupOptions }
  */
 export default {
   input: path.resolve(__dirname, 'src/index.ts'),
-  external: ['fsevents', 'joi', ...Object.keys(require('./package.json').dependencies)],
+  external: [
+    'fsevents',
+    'joi',
+    'resolve',
+    ...Object.keys(require('./package.json').dependencies)
+  ],
   plugins: [
     copy({
       targets: [
@@ -22,6 +27,11 @@ export default {
           src: 'node_modules/slash/index.d.ts',
           dest: 'dist',
           rename: 'slash.d.ts'
+        },
+        {
+          src: 'node_modules/@types/resolve/index.d.ts',
+          dest: 'dist',
+          rename: 'resolve.d.ts'
         },
         {
           src: 'node_modules/joi/lib/index.d.ts',
@@ -72,17 +82,3 @@ export default {
     sourcemap: true
   }
 }
-
-// {
-//   src: 'node_modules/clear-module/index.d.ts',
-//   dest: 'dist',
-//   rename: 'clear-module.d.ts'
-// },
-
-// 'resolve',
-
-// {
-//   src: 'node_modules/@types/resolve/index.d.ts',
-//   dest: 'dist',
-//   rename: 'resolve.d.ts'
-// },
